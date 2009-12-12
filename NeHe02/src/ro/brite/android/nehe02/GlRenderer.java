@@ -11,16 +11,16 @@ import android.opengl.GLSurfaceView.Renderer;
 public class GlRenderer implements Renderer {
 
 	private static float[] triangleCoords = new float[] {
-		 0.0f,  1.0f, 0.0f,
-		-1.0f, -1.0f, 0.0f,
-		 1.0f, -1.0f, 0.0f
+		 0,  1, 0,
+		-1, -1, 0,
+		 1, -1, 0
 	};
 	
 	private static float[] quadCoords = new float[] {
-		-1.0f, 1.0f, 0.0f,
-		-1.0f,-1.0f, 0.0f,
-		 1.0f, 1.0f, 0.0f,
-		 1.0f,-1.0f, 0.0f
+		-1, 1, 0,
+		-1,-1, 0,
+		 1, 1, 0,
+		 1,-1, 0
 	};
 
 	private static FloatBuffer triangleBuffer;
@@ -38,7 +38,7 @@ public class GlRenderer implements Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glShadeModel(GL10.GL_SMOOTH);
-		gl.glClearColor(0, 0, 0.5f, 0);
+		gl.glClearColor(0, 0, 0, 0);
 
 		gl.glClearDepthf(1.0f);
 		gl.glEnable(GL10.GL_DEPTH_TEST);
