@@ -1,6 +1,5 @@
 package ro.brite.android.nehe06;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -11,6 +10,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLU;
+import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 
 
@@ -138,29 +138,11 @@ public class GlRenderer implements Renderer {
 		gl.glGenTextures(1, texturesBuffer);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
 		
-		// convert bitmap to texture
-		Bitmap texture = BitmapFactory.decodeResource(context.getResources(), R.drawable.nehe);
-		int texWidth = texture.getWidth();
-		int texHeight = texture.getHeight();
-		int[] pixels = new int[texWidth * texHeight];
-		texture.getPixels(pixels, 0, texWidth, 0, 0, texWidth, texHeight);
-		byte[] pixelBytes = new byte[3 * texWidth * texHeight];
-		for (int x = 0; x < texWidth; x++)
-			for (int y = 0; y < texHeight; y++)
-			{
-				// flip the image
-				int srcIdx = x * texWidth + y;
-				int dstIdx = x * texWidth + (texHeight - y - 1);
-				pixelBytes[3 * dstIdx + 2] = (byte) ((pixels[srcIdx] & 0x0000ff) >>  0);
-				pixelBytes[3 * dstIdx + 1] = (byte) ((pixels[srcIdx] & 0x00ff00) >>  8);
-				pixelBytes[3 * dstIdx + 0] = (byte) ((pixels[srcIdx] & 0xff0000) >> 16);
-			}
-		ByteBuffer pixelBuffer = ByteBuffer.wrap(pixelBytes);
-		
 		// setup texture parameters and build the texture
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
-		gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, texWidth, texHeight, 0, GL10.GL_RGB, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+		Bitmap texture = BitmapFactory.decodeResource(context.getResources(), R.drawable.nehe);
+		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 	}
 
 	@Override
