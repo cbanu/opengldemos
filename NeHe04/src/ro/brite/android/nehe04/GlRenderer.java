@@ -38,14 +38,9 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		triangleVertexBfr = FloatBuffer.allocate(triangleCoords.length);
-		triangleVertexBfr.put(triangleCoords);
-		
-		triangleColorBfr = FloatBuffer.allocate(triangleColors.length);
-		triangleColorBfr.put(triangleColors);
-		
-		quadVertexBfr = FloatBuffer.allocate(quadCoords.length);
-		quadVertexBfr.put(quadCoords);
+		triangleVertexBfr = FloatBuffer.wrap(triangleCoords);
+		triangleColorBfr = FloatBuffer.wrap(triangleColors);
+		quadVertexBfr = FloatBuffer.wrap(quadCoords);
 	}
 
 	@Override

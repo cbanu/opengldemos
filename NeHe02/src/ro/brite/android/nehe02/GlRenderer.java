@@ -28,11 +28,8 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		triangleBuffer = FloatBuffer.allocate(triangleCoords.length);
-		triangleBuffer.put(triangleCoords);
-		
-		quadBuffer = FloatBuffer.allocate(quadCoords.length);
-		quadBuffer.put(quadCoords);
+		triangleBuffer = FloatBuffer.wrap(triangleCoords);
+		quadBuffer = FloatBuffer.wrap(quadCoords);
 	}
 
 	@Override

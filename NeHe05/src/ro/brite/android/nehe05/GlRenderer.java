@@ -85,17 +85,13 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		pyramidVertexBfr = FloatBuffer.allocate(pyramidCoords.length);
-		pyramidVertexBfr.put(pyramidCoords);
-		
-		pyramidColorBfr = FloatBuffer.allocate(pyramidColors.length);
-		pyramidColorBfr.put(pyramidColors);
+		pyramidVertexBfr = FloatBuffer.wrap(pyramidCoords);
+		pyramidColorBfr = FloatBuffer.wrap(pyramidColors);
 		
 		cubeVertexBfr = new FloatBuffer[6];
 		for (int i = 0; i < 6; i++)
 		{
-			cubeVertexBfr[i] = FloatBuffer.allocate(cubeCoords[i].length);
-			cubeVertexBfr[i].put(cubeCoords[i]);
+			cubeVertexBfr[i] = FloatBuffer.wrap(cubeCoords[i]);
 		}
 	}
 
