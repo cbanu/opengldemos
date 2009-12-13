@@ -10,8 +10,6 @@ import ro.brite.android.nehe07.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
@@ -143,8 +141,6 @@ public class GlRenderer implements Renderer {
 		},
 	};
 	
-	private static Matrix xFlipMatrix;
-	
 	private final static float lightAmb[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 	private final static float lightDif[]= { 1.0f, 1.0f, 1.0f, 1.0f };
 	private final static float lightPos[]= { 0.0f, 0.0f, 2.0f, 1.0f };
@@ -182,9 +178,6 @@ public class GlRenderer implements Renderer {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
 		lightDifBfr = FloatBuffer.wrap(lightDif);
 		lightPosBfr = FloatBuffer.wrap(lightPos);
-		
-		xFlipMatrix = new Matrix();
-		xFlipMatrix.postScale(-1, 1); // flip X axis
 	}
 
 	@Override
@@ -209,26 +202,35 @@ public class GlRenderer implements Renderer {
 		
 		// create texture
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		texturesBuffer = IntBuffer.allocate(2);
+		texturesBuffer = IntBuffer.allocate(3);
 		gl.glGenTextures(3, texturesBuffer);
 		
 		// load bitmap
-		Bitmap texture = getTextureFromBitmapResource(context, R.drawable.crate);
+		Bitmap texture = Utils.getTextureFromBitmapResource(context, R.drawable.crate);
 		
 		// setup texture 0
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 		
 		// setup texture 1
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(1));
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 		
 		// setup texture 2
-		// to do: mipmap still not working
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(2));
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR_MIPMAP_NEAREST);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+		Utils.generateMipmapsForBoundTexture(texture);
 
 		// free bitmap
 		texture.recycle();
@@ -241,13 +243,9 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		
 		// update lighting
-		
-		if (lighting)
-		{
+		if (lighting) {
 			gl.glEnable(GL10.GL_LIGHTING);
-		}
-		else
-		{
+		} else {
 			gl.glDisable(GL10.GL_LIGHTING);
 		}
 		
@@ -287,27 +285,13 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
 	}
-
-	private static Bitmap getTextureFromBitmapResource(Context context, int resourceId)
-	{
-		Bitmap bitmap = null;
-		try {
-			bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
-			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), xFlipMatrix, false);
-		}
-		finally	{
-			if (bitmap != null) {
-				bitmap.recycle();
-			}
-		}
-	}
 	
 	public void toggleLighting() {
 		lighting = !lighting;
 	}
 
 	public void switchToNextFilter() {
-		filter = (filter + 1) % 2;
+		filter = (filter + 1) % 3;
 	}
 
 }
