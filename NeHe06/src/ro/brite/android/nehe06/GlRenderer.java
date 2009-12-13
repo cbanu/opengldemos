@@ -130,6 +130,9 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL10.GL_LEQUAL);
 		
+		gl.glEnable(GL10.GL_CULL_FACE);
+		gl.glCullFace(GL10.GL_BACK);
+		
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		
 		// create texture
@@ -138,11 +141,14 @@ public class GlRenderer implements Renderer {
 		gl.glGenTextures(1, texturesBuffer);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
 		
-		// setup texture parameters and build the texture
+		// setup texture parameters
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+		
+		// set the texture
 		Bitmap texture = BitmapFactory.decodeResource(context.getResources(), R.drawable.nehe);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+		texture.recycle();
 	}
 
 	@Override
