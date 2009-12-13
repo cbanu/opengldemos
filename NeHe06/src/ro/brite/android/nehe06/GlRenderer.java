@@ -8,8 +8,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
@@ -102,8 +100,6 @@ public class GlRenderer implements Renderer {
 		},
 	};
 	
-	private static Matrix xFlipMatrix;
-	
 	private static FloatBuffer[] cubeVertexBfr;
 	private static FloatBuffer[] cubeTextureBfr;
 	
@@ -122,9 +118,6 @@ public class GlRenderer implements Renderer {
 			cubeVertexBfr[i] = FloatBuffer.wrap(cubeVertexCoords[i]);
 			cubeTextureBfr[i] = FloatBuffer.wrap(cubeTextureCoords[i]);
 		}
-		
-		xFlipMatrix = new Matrix();
-		xFlipMatrix.postScale(-1, 1); // flip X axis
 	}
 
 	@Override
@@ -150,9 +143,11 @@ public class GlRenderer implements Renderer {
 		// setup texture parameters
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 		
 		// set the texture
-		Bitmap texture = getTextureFromBitmapResource(context, R.drawable.nehe);
+		Bitmap texture = Utils.getTextureFromBitmapResource(context, R.drawable.nehe);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 		texture.recycle();
 	}
@@ -200,18 +195,4 @@ public class GlRenderer implements Renderer {
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
 	}
 
-	private static Bitmap getTextureFromBitmapResource(Context context, int resourceId)
-	{
-		Bitmap bitmap = null;
-		try {
-			bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
-			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), xFlipMatrix, false);
-		}
-		finally	{
-			if (bitmap != null) {
-				bitmap.recycle();
-			}
-		}
-	}
-	
 }
