@@ -204,7 +204,7 @@ public class GlRenderer implements Renderer {
 	{
 		Bitmap bitmap = null;
 		try {
-			bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.nehe);
+			bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
 			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), xFlipMatrix, false);
 		}
 		finally	{
