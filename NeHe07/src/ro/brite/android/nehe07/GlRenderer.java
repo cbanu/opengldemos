@@ -11,6 +11,7 @@ import ro.brite.android.nehe07.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
@@ -142,6 +143,8 @@ public class GlRenderer implements Renderer {
 		},
 	};
 	
+	private static Matrix xFlipMatrix;
+	
 	private final static float lightAmb[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 	private final static float lightDif[]= { 1.0f, 1.0f, 1.0f, 1.0f };
 	private final static float lightPos[]= { 0.0f, 0.0f, 2.0f, 1.0f };
@@ -156,9 +159,13 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private float cubeRotX;
-	private float cubeRotY;
-	private float cubeRotZ;
+	private float xRot;
+	private float yRot;
+	float xSpeed;
+	float ySpeed;
+	
+	private boolean lighting = true;
+	private int filter = 0;
 	
 	static
 	{
@@ -175,6 +182,9 @@ public class GlRenderer implements Renderer {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
 		lightDifBfr = FloatBuffer.wrap(lightDif);
 		lightPosBfr = FloatBuffer.wrap(lightPos);
+		
+		xFlipMatrix = new Matrix();
+		xFlipMatrix.postScale(-1, 1); // flip X axis
 	}
 
 	@Override
@@ -188,24 +198,40 @@ public class GlRenderer implements Renderer {
 		
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		
+		gl.glEnable(GL10.GL_CULL_FACE);
+		gl.glCullFace(GL10.GL_BACK);
+		
 		// lighting
 		gl.glEnable(GL10.GL_LIGHT0);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
-		gl.glEnable(GL10.GL_LIGHTING);
 		
 		// create texture
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		texturesBuffer = IntBuffer.allocate(1);
-		gl.glGenTextures(1, texturesBuffer);
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
+		texturesBuffer = IntBuffer.allocate(2);
+		gl.glGenTextures(3, texturesBuffer);
 		
-		// setup texture parameters and build texture
+		// load bitmap
+		Bitmap texture = getTextureFromBitmapResource(context, R.drawable.crate);
+		
+		// setup texture 0
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+		
+		// setup texture 1
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(1));
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
-		Bitmap texture = BitmapFactory.decodeResource(context.getResources(), R.drawable.crate);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+		
+		// setup texture 2
+		// to do: mipmap still not working
+
+		// free bitmap
+		texture.recycle();
 	}
 
 	@Override
@@ -214,14 +240,24 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		
+		// update lighting
+		
+		if (lighting)
+		{
+			gl.glEnable(GL10.GL_LIGHTING);
+		}
+		else
+		{
+			gl.glDisable(GL10.GL_LIGHTING);
+		}
+		
 		// draw cube
 		
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(cubeRotX, 1, 0, 0);
-		gl.glRotatef(cubeRotY, 0, 1, 0);
-		gl.glRotatef(cubeRotZ, 0, 0, 1);
+		gl.glRotatef(xRot, 1, 0, 0);
+		gl.glRotatef(yRot, 0, 1, 0);
 		
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(filter));
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -236,9 +272,8 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
 		// update rotations
-		cubeRotX += 1.2f;
-		cubeRotY += 0.8f;
-		cubeRotZ += 0.6f;
+		xRot += xSpeed;
+		yRot += ySpeed;
 	}
 
 	@Override
@@ -251,6 +286,28 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
+	}
+
+	private static Bitmap getTextureFromBitmapResource(Context context, int resourceId)
+	{
+		Bitmap bitmap = null;
+		try {
+			bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
+			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), xFlipMatrix, false);
+		}
+		finally	{
+			if (bitmap != null) {
+				bitmap.recycle();
+			}
+		}
+	}
+	
+	public void toggleLighting() {
+		lighting = !lighting;
+	}
+
+	public void switchToNextFilter() {
+		filter = (filter + 1) % 2;
 	}
 
 }
