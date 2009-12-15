@@ -181,28 +181,8 @@ public class GlRenderer implements Renderer {
 		lightPosBfr = FloatBuffer.wrap(lightPos);
 	}
 
-	@Override
-	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		gl.glShadeModel(GL10.GL_SMOOTH);
-		gl.glClearColor(0, 0, 0, 0);
-
-		gl.glClearDepthf(1.0f);
-		gl.glEnable(GL10.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL10.GL_LEQUAL);
-		
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-		
-		// lighting
-		gl.glEnable(GL10.GL_LIGHT0);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
-		
-		// blending
-		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
-		
-		// create texture
+	private void LoadTextures(GL10 gl) {
+		// create textures
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texturesBuffer = IntBuffer.allocate(3);
 		gl.glGenTextures(3, texturesBuffer);
@@ -236,6 +216,28 @@ public class GlRenderer implements Renderer {
 
 		// free bitmap
 		texture.recycle();
+	}
+	
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		gl.glShadeModel(GL10.GL_SMOOTH);
+		gl.glClearColor(0, 0, 0, 0);
+
+		gl.glClearDepthf(1.0f);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL10.GL_LEQUAL);
+		
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		
+		// lighting
+		gl.glEnable(GL10.GL_LIGHT0);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
+		
+		// blending
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
 	@Override
@@ -287,6 +289,8 @@ public class GlRenderer implements Renderer {
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		// reload textures
+		LoadTextures(gl);
 		// avoid division by zero
 		if (height == 0) height = 1;
 		// draw on the entire screen

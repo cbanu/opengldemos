@@ -42,12 +42,6 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer quadVertexBuffer;
 	private static FloatBuffer quadTextureBuffer;
 	
-	static
-	{
-		quadVertexBuffer = FloatBuffer.wrap(quadVertexCoords);
-		quadTextureBuffer = FloatBuffer.wrap(quadTextureCoords);
-	}
-	
 	private IntBuffer texturesBuffer;
 	
 	private final int nrStars = 30;
@@ -58,15 +52,14 @@ public class GlRenderer implements Renderer {
 	private float spin;
 	private boolean twinkle = true;
 	
-	@Override
-	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		gl.glShadeModel(GL10.GL_SMOOTH);
-		gl.glClearColor(0, 0, 0, 0);
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-		gl.glEnable(GL10.GL_BLEND);
-		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
-		
-		// create texture
+	static
+	{
+		quadVertexBuffer = FloatBuffer.wrap(quadVertexCoords);
+		quadTextureBuffer = FloatBuffer.wrap(quadTextureCoords);
+	}
+	
+	private void LoadTextures(GL10 gl) {
+		// create textures
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texturesBuffer = IntBuffer.allocate(1);
 		gl.glGenTextures(1, texturesBuffer);
@@ -81,7 +74,18 @@ public class GlRenderer implements Renderer {
 		// set the texture
 		Bitmap texture = Utils.getTextureFromBitmapResource(context, R.drawable.star);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+		
+		// free bitmap
 		texture.recycle();
+	}
+	
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		gl.glShadeModel(GL10.GL_SMOOTH);
+		gl.glClearColor(0, 0, 0, 0);
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 		
 		// setup stars
 		stars = new Star[nrStars];
@@ -146,6 +150,8 @@ public class GlRenderer implements Renderer {
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		// reload textures
+		LoadTextures(gl);
 		// avoid division by zero
 		if (height == 0) height = 1;
 		// draw on the entire screen

@@ -188,35 +188,8 @@ public class GlRenderer implements Renderer {
 		fogColorBfr = FloatBuffer.wrap(fogColor);
 	}
 
-	@Override
-	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		gl.glShadeModel(GL10.GL_SMOOTH);
-		gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-
-		gl.glClearDepthf(1.0f);
-		gl.glEnable(GL10.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL10.GL_LEQUAL);
-		
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-		
-		gl.glEnable(GL10.GL_CULL_FACE);
-		gl.glCullFace(GL10.GL_BACK);
-		
-		// lighting
-		gl.glEnable(GL10.GL_LIGHT0);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
-
-		// fog
-		gl.glFogfv(GL10.GL_FOG_COLOR, fogColorBfr);
-		gl.glFogf(GL10.GL_FOG_DENSITY, 0.35f);
-		gl.glHint(GL10.GL_FOG_HINT, GL10.GL_DONT_CARE);
-		gl.glFogf(GL10.GL_FOG_START, 2.0f);
-		gl.glFogf(GL10.GL_FOG_END, 6.0f);
-		gl.glEnable(GL10.GL_FOG);
-		
-		// create texture
+	private void LoadTextures(GL10 gl) {
+		// create textures
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texturesBuffer = IntBuffer.allocate(3);
 		gl.glGenTextures(3, texturesBuffer);
@@ -250,6 +223,35 @@ public class GlRenderer implements Renderer {
 
 		// free bitmap
 		texture.recycle();
+	}
+	
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		gl.glShadeModel(GL10.GL_SMOOTH);
+		gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+
+		gl.glClearDepthf(1.0f);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL10.GL_LEQUAL);
+		
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		
+		gl.glEnable(GL10.GL_CULL_FACE);
+		gl.glCullFace(GL10.GL_BACK);
+		
+		// lighting
+		gl.glEnable(GL10.GL_LIGHT0);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
+
+		// fog
+		gl.glFogfv(GL10.GL_FOG_COLOR, fogColorBfr);
+		gl.glFogf(GL10.GL_FOG_DENSITY, 0.35f);
+		gl.glHint(GL10.GL_FOG_HINT, GL10.GL_DONT_CARE);
+		gl.glFogf(GL10.GL_FOG_START, 2.0f);
+		gl.glFogf(GL10.GL_FOG_END, 6.0f);
+		gl.glEnable(GL10.GL_FOG);
 	}
 
 	@Override
@@ -295,6 +297,8 @@ public class GlRenderer implements Renderer {
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		// reload textures
+		LoadTextures(gl);
 		// avoid division by zero
 		if (height == 0) height = 1;
 		// draw on the entire screen
