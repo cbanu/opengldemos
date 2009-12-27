@@ -8,7 +8,6 @@ import android.opengl.GLSurfaceView.Renderer;
 
 public class GlRenderer implements Renderer {
 
-	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glClearColor(0, 0, 0, 0);
@@ -20,13 +19,11 @@ public class GlRenderer implements Renderer {
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 	}
 
-	@Override
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
 	}
 
-	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		// avoid division by zero
 		if (height == 0) height = 1;

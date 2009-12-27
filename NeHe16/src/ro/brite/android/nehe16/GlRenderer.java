@@ -225,7 +225,6 @@ public class GlRenderer implements Renderer {
 		texture.recycle();
 	}
 	
-	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -254,7 +253,6 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_FOG);
 	}
 
-	@Override
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
@@ -295,7 +293,6 @@ public class GlRenderer implements Renderer {
 		yRot += ySpeed;
 	}
 
-	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		// reload textures
 		LoadTextures(gl);

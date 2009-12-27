@@ -120,7 +120,6 @@ public class GlRenderer implements Renderer {
 		}
 	}
 
-	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glClearColor(0, 0, 0, 0);
@@ -152,7 +151,6 @@ public class GlRenderer implements Renderer {
 		texture.recycle();
 	}
 
-	@Override
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
@@ -183,7 +181,6 @@ public class GlRenderer implements Renderer {
 		cubeRotZ += 0.6f;
 	}
 
-	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		// avoid division by zero
 		if (height == 0) height = 1;

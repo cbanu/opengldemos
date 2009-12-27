@@ -79,7 +79,6 @@ public class GlRenderer implements Renderer {
 		texture.recycle();
 	}
 	
-	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glClearColor(0, 0, 0, 0);
@@ -99,7 +98,6 @@ public class GlRenderer implements Renderer {
 		}
 	}
 
-	@Override
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
@@ -148,7 +146,6 @@ public class GlRenderer implements Renderer {
 		}
 	}
 
-	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		// reload textures
 		LoadTextures(gl);
