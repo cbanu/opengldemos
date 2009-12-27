@@ -286,6 +286,7 @@ public class GlRenderer implements Renderer {
 			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);
 		}
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
 		// update rotations
