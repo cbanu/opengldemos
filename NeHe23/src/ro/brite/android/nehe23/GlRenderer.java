@@ -57,11 +57,11 @@ public class GlRenderer implements Renderer {
 		lightPosBfr = FloatBuffer.wrap(lightPos);
 
 		cube = new GlCube(1.0f, true, true);
-		cylinder = new GlCylinder(1.0f, 1.0f, 3.0f, 32, 4, true, true);
-		disk = new GlDisk(0.5f, 1.5f, 32, 4, true, true);
-		sphere = new GlSphere(1.3f, 24, 12, true, true);
-		cone = new GlCylinder(1.0f, 0.0f, 3.0f, 32, 4, true, true);
-		partialDisk = new GlDisk(0.5f, 1.5f, 32, 4, (float) (Math.PI / 4), (float) (7 * Math.PI / 4), true, true);
+		cylinder = new GlCylinder(1.0f, 1.0f, 3.0f, 16, 4, true, true);
+		disk = new GlDisk(0.5f, 1.5f, 16, 4, true, true);
+		sphere = new GlSphere(1.3f, 16, 8, true, true);
+		cone = new GlCylinder(1.0f, 0.0f, 3.0f, 16, 4, true, true);
+		partialDisk = new GlDisk(0.5f, 1.5f, 16, 4, (float) (Math.PI / 4), (float) (7 * Math.PI / 4), true, true);
 		
 		background = new GlPlane(16, 12, true, true);
 	}
@@ -164,7 +164,7 @@ public class GlRenderer implements Renderer {
 		mInvRot.rotate(yRot, 0, 1, 0);
 		
 		// draw object
-		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + filter));
 		switch (object) {
 		case 0:
