@@ -131,6 +131,9 @@ public class GlRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
+
+		// set object color
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		
 		// update lighting
 		if (lighting) {
@@ -164,7 +167,6 @@ public class GlRenderer implements Renderer {
 		mInvRot.rotate(yRot, 0, 1, 0);
 		
 		// draw object
-		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + filter));
 		switch (object) {
 		case 0:

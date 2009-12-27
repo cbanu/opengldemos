@@ -63,40 +63,40 @@ public class GlRenderer implements Renderer {
 
 	private static float[][] cubeTextureCoords = new float[][] {
 		new float[] { // top
-			0,1,
-			0,0,
-			1,0,
-			1,1
+			1, 0,
+			1, 1,
+			0, 1,
+			0, 0
 		},
 		new float[] { // bottom
-			1,1,
-			0,1,
-			0,0,
-			1,0
+			0, 0,
+			1, 0,
+			1, 1,
+			0, 1
 		},
 		new float[] { // front
-			0,0,
-			1,0,
-			1,1,
-			0,1
+			1, 1,
+			0, 1,
+			0, 0,
+			1, 0
 		},
 		new float[] { // back
-			1,0,
-			1,1,
-			0,1,
-			0,0
+			0, 1,
+			0, 0,
+			1, 0,
+			1, 1
 		},
 		new float[] { // left
-			0,0,
-			1,0,
-			1,1,
-			0,1
+			1, 1,
+			0, 1,
+			0, 0,
+			1, 0
 		},
 		new float[] { // right
-			1,0,
-			1,1,
-			0,1,
-			0,0
+			0, 1,
+			0, 0,
+			1, 0,
+			1, 1
 		},
 	};
 	

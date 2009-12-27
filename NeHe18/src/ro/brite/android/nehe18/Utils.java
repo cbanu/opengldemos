@@ -11,11 +11,11 @@ import android.opengl.GLUtils;
 
 final class Utils {
 
-	private static Matrix xFlipMatrix;
+	private static Matrix yFlipMatrix;
 	
 	static {
-		xFlipMatrix = new Matrix();
-		xFlipMatrix.postScale(-1, 1); // flip X axis
+		yFlipMatrix = new Matrix();
+		yFlipMatrix.postScale(-1, 1); // flip Y axis
 	}
 	
 	public static Bitmap getTextureFromBitmapResource(Context context, int resourceId) {
@@ -23,7 +23,7 @@ final class Utils {
 		Bitmap bitmap = null;
 		try {
 			bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
-			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), xFlipMatrix, false);
+			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), yFlipMatrix, false);
 		}
 		finally	{
 			if (bitmap != null) {
