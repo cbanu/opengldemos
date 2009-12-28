@@ -111,8 +111,8 @@ final class Utils {
 		mInvRot.transform(vR);
 		
 		float p = (float)Math.sqrt(vR.v[0] * vR.v[0] + vR.v[1] * vR.v[1] + (vR.v[2] + 1) * (vR.v[2] + 1));
-		float s = 0.5f * (vR.v[0] / p + 1);
-		float t = 0.5f * (vR.v[1] / p + 1);
+		float s = (p != 0) ? 0.5f * (vR.v[0] / p + 1) : 0;
+		float t = (p != 0) ? 0.5f * (vR.v[1] / p + 1) : 0;
 		
 		texCoordBuffer.put(texCoordOffset, s);
 		texCoordBuffer.put(texCoordOffset + 1, t);

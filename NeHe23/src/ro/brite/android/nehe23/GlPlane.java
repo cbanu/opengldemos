@@ -64,7 +64,7 @@ class GlPlane extends GlObject {
 	}
 
 	@Override
-	public void Draw(GL10 gl) {
+	public void draw(GL10 gl) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		if (useNormals) {
 			gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
@@ -90,5 +90,10 @@ class GlPlane extends GlObject {
 		if (useTexCoords) {
 			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		}
+	}
+
+	@Override
+	public void calculateReflectionTexCoords(GlVertex vEye, GlMatrix mInvRot) {
+		// don't do reflections
 	}
 }

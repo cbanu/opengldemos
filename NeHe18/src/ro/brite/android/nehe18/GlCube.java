@@ -167,7 +167,7 @@ class GlCube extends GlObject {
 	}
 
 	@Override
-	public void Draw(GL10 gl) {
+	public void draw(GL10 gl) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		if (useNormals) {
 			gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);

@@ -142,32 +142,32 @@ public class GlRenderer implements Renderer {
 		case 0:
 			gl.glEnable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
-			cube.Draw(gl);
+			cube.draw(gl);
 			break;
 		case 1:
 			gl.glDisable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			cylinder.Draw(gl);
+			cylinder.draw(gl);
 			break;
 		case 2:
 			gl.glDisable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			disk.Draw(gl);
+			disk.draw(gl);
 			break;
 		case 3:
 			gl.glEnable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
-			sphere.Draw(gl);
+			sphere.draw(gl);
 			break;
 		case 4:
 			gl.glDisable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			cone.Draw(gl);
+			cone.draw(gl);
 			break;
 		case 5:
 			gl.glDisable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			partialDisk.Draw(gl);
+			partialDisk.draw(gl);
 			break;
 		}
 		

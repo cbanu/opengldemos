@@ -41,7 +41,7 @@ public class GlRenderer implements Renderer {
 	private static boolean lighting = false;
 	private static int filter = 0;
 
-	private static int object;
+	private static int objectIdx;
 	private static GlCube cube;
 	private static GlCylinder cylinder;
 	private static GlDisk disk;
@@ -145,7 +145,7 @@ public class GlRenderer implements Renderer {
 		// draw background
 		gl.glPushMatrix();
 		gl.glTranslatef(0, 0, -10);
-		background.Draw(gl);
+		background.draw(gl);
 		gl.glPopMatrix();
 		
 		// position object
@@ -166,46 +166,49 @@ public class GlRenderer implements Renderer {
 		mInvRot.rotate(xRot, 1, 0, 0);
 		mInvRot.rotate(yRot, 0, 1, 0);
 		
-		// draw object
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + filter));
-		switch (object) {
+		// identify object to draw
+		GlObject object = null;
+		boolean doubleSided = false;
+		switch (objectIdx) {
 		case 0:
-			gl.glEnable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
-			cube.calculateReflectionTexCoords(vEye, mInvRot);
-			cube.Draw(gl);
+			object = cube;
+			doubleSided = false;
 			break;
 		case 1:
-			gl.glDisable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			cylinder.calculateReflectionTexCoords(vEye, mInvRot);
-			cylinder.Draw(gl);
+			object = cylinder;
+			doubleSided = true;
 			break;
 		case 2:
-			gl.glDisable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			disk.calculateReflectionTexCoords(vEye, mInvRot);
-			disk.Draw(gl);
+			object = disk;
+			doubleSided = true;
 			break;
 		case 3:
-			gl.glEnable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
-			sphere.calculateReflectionTexCoords(vEye, mInvRot);
-			sphere.Draw(gl);
+			object = sphere;
+			doubleSided = false;
 			break;
 		case 4:
-			gl.glDisable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			cone.calculateReflectionTexCoords(vEye, mInvRot);
-			cone.Draw(gl);
+			object = cone;
+			doubleSided = true;
 			break;
 		case 5:
-			gl.glDisable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
-			partialDisk.calculateReflectionTexCoords(vEye, mInvRot);
-			partialDisk.Draw(gl);
+			object = partialDisk;
+			doubleSided = true;
 			break;
 		}
+
+		// adjust rendering parameters
+		if (doubleSided) {
+			gl.glDisable(GL10.GL_CULL_FACE);
+			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, lighting ? GL10.GL_TRUE : GL10.GL_FALSE);
+		} else {
+			gl.glEnable(GL10.GL_CULL_FACE);
+			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
+		}
+		
+		// draw object
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + filter));
+		object.calculateReflectionTexCoords(vEye, mInvRot);
+		object.draw(gl);
 		
 		// update rotations
 		xRot += xSpeed;
@@ -234,7 +237,7 @@ public class GlRenderer implements Renderer {
 	}
 
 	public static void switchToNextObject() {
-		object = (object + 1) % 6;
+		objectIdx = (objectIdx + 1) % 6;
 	}
 	
 }

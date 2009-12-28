@@ -93,7 +93,7 @@ class GlDisk extends GlObject {
 	
 	
 	@Override
-	public void Draw(GL10 gl) {
+	public void draw(GL10 gl) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		if (normals) {
 			gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
@@ -122,6 +122,7 @@ class GlDisk extends GlObject {
 		}
 	}
 	
+	@Override
 	public void calculateReflectionTexCoords(GlVertex vEye, GlMatrix mInvRot) {
 		for (int i = 0; i < loops; i++) {
 			for (int j = 0; j <= slices; j++) {
