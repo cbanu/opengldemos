@@ -145,6 +145,7 @@ public class GlRenderer implements Renderer {
 		// draw background
 		gl.glPushMatrix();
 		gl.glTranslatef(0, 0, -10);
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(filter));
 		background.draw(gl);
 		gl.glPopMatrix();
 		
