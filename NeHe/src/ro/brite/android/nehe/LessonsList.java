@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.util.Xml;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 
@@ -28,6 +31,29 @@ public class LessonsList extends ListActivity {
         setListAdapter(adapter);
     }
 
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+    	Map<?, ?> item = (Map<?, ?>)getListAdapter().getItem(position);
+		int itemId = (Integer)item.get("id");
+		switch (itemId) {
+		case  1: startActivity(new Intent(this, ro.brite.android.nehe01.GlApp.class)); break;
+		case  2: startActivity(new Intent(this, ro.brite.android.nehe02.GlApp.class)); break;
+		case  3: startActivity(new Intent(this, ro.brite.android.nehe03.GlApp.class)); break;
+		case  4: startActivity(new Intent(this, ro.brite.android.nehe04.GlApp.class)); break;
+		case  5: startActivity(new Intent(this, ro.brite.android.nehe05.GlApp.class)); break;
+		case  6: startActivity(new Intent(this, ro.brite.android.nehe06.GlApp.class)); break;
+		case  7: startActivity(new Intent(this, ro.brite.android.nehe07.GlApp.class)); break;
+		case  8: startActivity(new Intent(this, ro.brite.android.nehe08.GlApp.class)); break;
+		case  9: startActivity(new Intent(this, ro.brite.android.nehe09.GlApp.class)); break;
+		case 16: startActivity(new Intent(this, ro.brite.android.nehe16.GlApp.class)); break;
+		case 18: startActivity(new Intent(this, ro.brite.android.nehe18.GlApp.class)); break;
+		case 23: startActivity(new Intent(this, ro.brite.android.nehe23.GlApp.class)); break;
+		default:
+			super.onListItemClick(l, v, position, id);
+			break;
+		}
+	}
+	
 	private List<Map<String, Object>> parseLessonsXml() {
     	
     	final List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
