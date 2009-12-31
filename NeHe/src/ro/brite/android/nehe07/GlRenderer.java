@@ -289,11 +289,11 @@ public class GlRenderer implements Renderer {
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
 	}
 	
-	public void toggleLighting() {
+	public static void toggleLighting() {
 		lighting = !lighting;
 	}
 
-	public void switchToNextFilter() {
+	public static void switchToNextFilter() {
 		filter = (filter + 1) % 3;
 	}
 

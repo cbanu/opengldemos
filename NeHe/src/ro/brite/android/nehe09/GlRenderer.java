@@ -159,7 +159,7 @@ public class GlRenderer implements Renderer {
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
 	}
 
-	public void toggleTwinkle() {
+	public static void toggleTwinkle() {
 		twinkle = !twinkle;
 	}
 	

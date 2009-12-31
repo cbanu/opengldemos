@@ -54,19 +54,19 @@ public class GlApp extends Activity {
 		switch (keyCode)
 		{
 		case KeyEvent.KEYCODE_T:
-			renderer.toggleTwinkle();
+			GlRenderer.toggleTwinkle();
 			break;
 		case KeyEvent.KEYCODE_A:
-			renderer.zoom -= 2;
+			GlRenderer.zoom -= 2;
 			break;
 		case KeyEvent.KEYCODE_Z:
-			renderer.zoom += 2;
+			GlRenderer.zoom += 2;
 			break;
 		case KeyEvent.KEYCODE_DPAD_UP:
-			renderer.tilt -= 5;
+			GlRenderer.tilt -= 5;
 			break;
 		case KeyEvent.KEYCODE_DPAD_DOWN:
-			renderer.tilt += 5;
+			GlRenderer.tilt += 5;
 			break;
 		}
 		return super.onKeyDown(keyCode, event);
