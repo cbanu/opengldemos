@@ -44,18 +44,29 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private final int nrStars = 30;
-	private Star[] stars;
+	private static final int nrStars = 30;
+	private static Star[] stars;
 	
-	float zoom = -20.0f;
-	float tilt = 90.0f;
-	private float spin;
-	private boolean twinkle = true;
+	static float zoom = -20.0f;
+	static float tilt = 90.0f;
+	private static float spin;
+	private static boolean twinkle = true;
 	
 	static
 	{
 		quadVertexBuffer = FloatBuffer.wrap(quadVertexCoords);
 		quadTextureBuffer = FloatBuffer.wrap(quadTextureCoords);
+		
+		// setup stars
+		stars = new Star[nrStars];
+		for (int i = 0; i < nrStars; i++) {
+			stars[i] = new Star();
+			stars[i].angle = 0;
+			stars[i].dist = (((float)i)/nrStars)*5.0f;
+			stars[i].r = (float)Math.random();
+			stars[i].g = (float)Math.random();
+			stars[i].b = (float)Math.random();
+		}
 	}
 	
 	private void LoadTextures(GL10 gl) {
@@ -85,17 +96,6 @@ public class GlRenderer implements Renderer {
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
-		
-		// setup stars
-		stars = new Star[nrStars];
-		for (int i = 0; i < nrStars; i++) {
-			stars[i] = new Star();
-			stars[i].angle = 0;
-			stars[i].dist = (((float)i)/nrStars)*5.0f;
-			stars[i].r = (float)Math.random();
-			stars[i].g = (float)Math.random();
-			stars[i].b = (float)Math.random();
-		}
 	}
 
 	public void onDrawFrame(GL10 gl) {

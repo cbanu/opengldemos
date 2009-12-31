@@ -155,14 +155,15 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private float xRot;
-	private float yRot;
-	float xSpeed;
-	float ySpeed;
+	private static float xRot;
+	private static float yRot;
 	
-	private boolean lighting = true;
-	private int filter = 0;
-	private boolean blending = true;
+	static float xSpeed;
+	static float ySpeed;
+	
+	private static boolean lighting = true;
+	private static int filter = 0;
+	private static boolean blending = true;
 	
 	static
 	{
