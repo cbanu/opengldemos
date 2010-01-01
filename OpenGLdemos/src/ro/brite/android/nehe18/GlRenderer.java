@@ -34,21 +34,14 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private static float xRot;
-	private static float yRot;
-	static float xSpeed;
-	static float ySpeed;
-	
-	private static boolean lighting = true;
-	private static int filter = 2;
-
-	private static int objectIdx = 1;
 	private static GlCube cube;
 	private static GlCylinder cylinder;
 	private static GlDisk disk;
 	private static GlSphere sphere;
 	private static GlCylinder cone;
 	private static GlDisk partialDisk;
+
+	static final SceneState sceneState;
 	
 	static {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
@@ -61,6 +54,8 @@ public class GlRenderer implements Renderer {
 		sphere = new GlSphere(1.3f, 24, 12, true, true);
 		cone = new GlCylinder(1.0f, 0.0f, 3.0f, 32, 4, true, true);
 		partialDisk = new GlDisk(0.5f, 1.5f, 32, 4, (float) (Math.PI / 4), (float) (7 * Math.PI / 4), true, true);
+
+		sceneState = new SceneState();
 	}
 
 	private void LoadTextures(GL10 gl) {
@@ -125,7 +120,7 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		
 		// update lighting
-		if (lighting) {
+		if (sceneState.lighting) {
 			gl.glEnable(GL10.GL_LIGHTING);
 		} else {
 			gl.glDisable(GL10.GL_LIGHTING);
@@ -133,13 +128,13 @@ public class GlRenderer implements Renderer {
 		
 		// position object
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(xRot, 1, 0, 0);
-		gl.glRotatef(yRot, 0, 1, 0);
+		gl.glRotatef(sceneState.xRot, 1, 0, 0);
+		gl.glRotatef(sceneState.yRot, 0, 1, 0);
 
 		// draw object
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(filter));
-		switch (objectIdx) {
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(sceneState.filter));
+		switch (sceneState.objectIdx) {
 		case 0:
 			gl.glEnable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
@@ -173,8 +168,8 @@ public class GlRenderer implements Renderer {
 		}
 		
 		// update rotations
-		xRot += xSpeed;
-		yRot += ySpeed;
+		sceneState.xRot += sceneState.xSpeed;
+		sceneState.yRot += sceneState.ySpeed;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -188,18 +183,6 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
-	}
-	
-	public static void toggleLighting() {
-		lighting = !lighting;
-	}
-
-	public static void switchToNextFilter() {
-		filter = (filter + 1) % 3;
-	}
-
-	public static void switchToNextObject() {
-		objectIdx = (objectIdx + 1) % 6;
 	}
 	
 }

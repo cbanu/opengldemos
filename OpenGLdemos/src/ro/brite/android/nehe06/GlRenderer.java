@@ -107,10 +107,8 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer[] cubeTextureBfr;
 	
 	private IntBuffer texturesBuffer;
-	
-	private static float cubeRotX;
-	private static float cubeRotY;
-	private static float cubeRotZ;
+
+	private static final SceneState sceneState;
 	
 	static
 	{
@@ -121,6 +119,8 @@ public class GlRenderer implements Renderer {
 			cubeVertexBfr[i] = FloatBuffer.wrap(cubeVertexCoords[i]);
 			cubeTextureBfr[i] = FloatBuffer.wrap(cubeTextureCoords[i]);
 		}
+		
+		sceneState = new SceneState();
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -162,9 +162,9 @@ public class GlRenderer implements Renderer {
 		// draw cube
 		
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(cubeRotX, 1, 0, 0);
-		gl.glRotatef(cubeRotY, 0, 1, 0);
-		gl.glRotatef(cubeRotZ, 0, 0, 1);
+		gl.glRotatef(sceneState.cubeRotX, 1, 0, 0);
+		gl.glRotatef(sceneState.cubeRotY, 0, 1, 0);
+		gl.glRotatef(sceneState.cubeRotZ, 0, 0, 1);
 		
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -179,9 +179,9 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
 		// update rotations
-		cubeRotX += 1.2f;
-		cubeRotY += 0.8f;
-		cubeRotZ += 0.6f;
+		sceneState.cubeRotX += 1.2f;
+		sceneState.cubeRotY += 0.8f;
+		sceneState.cubeRotZ += 0.6f;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {

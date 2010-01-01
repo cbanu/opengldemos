@@ -44,29 +44,14 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private static final int nrStars = 30;
-	private static Star[] stars;
-	
-	static float zoom = -20.0f;
-	static float tilt = 90.0f;
-	private static float spin;
-	private static boolean twinkle = false;
+	static final SceneState sceneState;
 	
 	static
 	{
 		quadVertexBuffer = FloatBuffer.wrap(quadVertexCoords);
 		quadTextureBuffer = FloatBuffer.wrap(quadTextureCoords);
 		
-		// setup stars
-		stars = new Star[nrStars];
-		for (int i = 0; i < nrStars; i++) {
-			stars[i] = new Star();
-			stars[i].angle = 0;
-			stars[i].dist = (((float)i)/nrStars)*5.0f;
-			stars[i].r = (float)Math.random();
-			stars[i].g = (float)Math.random();
-			stars[i].b = (float)Math.random();
-		}
+		sceneState = new SceneState();
 	}
 	
 	private void LoadTextures(GL10 gl) {
@@ -103,47 +88,38 @@ public class GlRenderer implements Renderer {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 
-		for (int i = 0; i < nrStars; i++)
+		for (int i = 0; i < sceneState.nrStars; i++)
 		{
 			gl.glLoadIdentity();
-			gl.glTranslatef(0, 0, zoom);					// Zoom Into The Screen (Using The Value In 'zoom')
-			gl.glRotatef(tilt, 1, 0, 0);					// Tilt The View (Using The Value In 'tilt')
+			gl.glTranslatef(0, 0, sceneState.zoom);					// Zoom Into The Screen (Using The Value In 'zoom')
+			gl.glRotatef(sceneState.tilt, 1, 0, 0);					// Tilt The View (Using The Value In 'tilt')
 			
-			gl.glRotatef(stars[i].angle, 0, 1, 0);			// Rotate To The Current Stars Angle
-			gl.glTranslatef(stars[i].dist, 0, 0);			// Move Forward On The X Plane
+			gl.glRotatef(sceneState.stars[i].angle, 0, 1, 0);		// Rotate To The Current Stars Angle
+			gl.glTranslatef(sceneState.stars[i].dist, 0, 0);		// Move Forward On The X Plane
 			
-			gl.glRotatef(-stars[i].angle, 0, 1, 0);			// Cancel The Current Stars Angle
-			gl.glRotatef(-tilt, 1, 0, 0);					// Cancel The Screen Tilt
+			gl.glRotatef(-sceneState.stars[i].angle, 0, 1, 0);		// Cancel The Current Stars Angle
+			gl.glRotatef(-sceneState.tilt, 1, 0, 0);				// Cancel The Screen Tilt
 
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBuffer);
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, quadTextureBuffer);
 
-			if (twinkle)									// Twinkling Stars Enabled
+			if (sceneState.twinkle)									// Twinkling Stars Enabled
 			{
-				gl.glColor4f(stars[(nrStars-i)-1].r, stars[(nrStars-i)-1].g, stars[(nrStars-i)-1].b, 1.0f);
+				Star twinkleStar = sceneState.stars[(sceneState.nrStars - i) - 1];
+				gl.glColor4f(twinkleStar.r, twinkleStar.g, twinkleStar.b, 1.0f);
 				gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 			}
-			gl.glRotatef(spin, 0, 0, 1);					// Rotate The Star On The Z Axis
-			gl.glColor4f(stars[i].r, stars[i].g, stars[i].b, 1.0f);
+			gl.glRotatef(sceneState.spin, 0, 0, 1);					// Rotate The Star On The Z Axis
+			gl.glColor4f(sceneState.stars[i].r, sceneState.stars[i].g, sceneState.stars[i].b, 1.0f);
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 			
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-			
-			spin += 0.01f;									// Used To Spin The Stars
-			stars[i].angle += ((float)i)/nrStars;			// Changes The Angle Of A Star
-			stars[i].dist -= 0.01f;							// Changes The Distance Of A Star
-
-			if (stars[i].dist < 0.0f)						// Is The Star In The Middle Yet
-			{
-				stars[i].dist += 5.0f;						// Move The Star 5 Units From The Center
-				stars[i].r = (float)Math.random();			// Give It A New Red Value
-				stars[i].g = (float)Math.random();			// Give It A New Green Value
-				stars[i].b = (float)Math.random();			// Give It A New Blue Value
-			}
 		}
+		
+		sceneState.updateNextFrame();
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -159,8 +135,4 @@ public class GlRenderer implements Renderer {
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
 	}
 
-	public static void toggleTwinkle() {
-		twinkle = !twinkle;
-	}
-	
 }

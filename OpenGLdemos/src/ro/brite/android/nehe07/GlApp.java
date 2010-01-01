@@ -54,25 +54,26 @@ public class GlApp extends Activity {
 		switch (keyCode)
 		{
 		case KeyEvent.KEYCODE_L:
-			GlRenderer.toggleLighting();
+			GlRenderer.sceneState.toggleLighting();
 			break;
 		case KeyEvent.KEYCODE_F:
-			GlRenderer.switchToNextFilter();
+			GlRenderer.sceneState.switchToNextFilter();
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			GlRenderer.xSpeed = GlRenderer.ySpeed = 0;
+			GlRenderer.sceneState.xSpeed = 0.0f;
+			GlRenderer.sceneState.ySpeed = 0.0f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_LEFT:
-			GlRenderer.ySpeed -= 0.1f;
+			GlRenderer.sceneState.ySpeed -= 0.1f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			GlRenderer.ySpeed += 0.1f;
+			GlRenderer.sceneState.ySpeed += 0.1f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_UP:
-			GlRenderer.xSpeed -= 0.1f;
+			GlRenderer.sceneState.xSpeed -= 0.1f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_DOWN:
-			GlRenderer.xSpeed += 0.1f;
+			GlRenderer.sceneState.xSpeed += 0.1f;
 			break;
 		}
 		return super.onKeyDown(keyCode, event);

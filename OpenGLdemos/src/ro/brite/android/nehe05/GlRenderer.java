@@ -5,6 +5,8 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import ro.brite.android.nehe05.SceneState;
+
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
@@ -80,8 +82,7 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer pyramidColorBfr;
 	private static FloatBuffer[] cubeVertexBfr;
 	
-	private static float pyramidRot;
-	private static float cubeRot;
+	private static final SceneState sceneState;
 	
 	static
 	{
@@ -93,6 +94,8 @@ public class GlRenderer implements Renderer {
 		{
 			cubeVertexBfr[i] = FloatBuffer.wrap(cubeCoords[i]);
 		}
+		
+		sceneState = new SceneState();
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -117,7 +120,7 @@ public class GlRenderer implements Renderer {
 		
 		// draw pyramid
 		gl.glTranslatef(-1.5f, 0, -6);
-		gl.glRotatef(pyramidRot, 0, 1, 0);
+		gl.glRotatef(sceneState.pyramidRot, 0, 1, 0);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, pyramidVertexBfr);
@@ -129,7 +132,7 @@ public class GlRenderer implements Renderer {
 		// draw cube
 		gl.glLoadIdentity();
 		gl.glTranslatef(1.5f, 0, -6);
-		gl.glRotatef(cubeRot, 1, 1, 1);
+		gl.glRotatef(sceneState.cubeRot, 1, 1, 1);
 		for (int i = 0; i < 6; i++)
 		{
 			gl.glColor4f(cubeColors[4*i+0], cubeColors[4*i+1], cubeColors[4*i+2], cubeColors[4*i+3]);
@@ -140,8 +143,8 @@ public class GlRenderer implements Renderer {
 		}
 		
 		// update rotations
-		pyramidRot += 0.8f;
-		cubeRot -= 0.5f;
+		sceneState.pyramidRot += 0.8f;
+		sceneState.cubeRot -= 0.5f;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {

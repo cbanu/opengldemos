@@ -33,14 +33,15 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer triangleColorBfr;
 	private static FloatBuffer quadVertexBfr;
 	
-	private static float triangleRot;
-	private static float quadRot;
+	private static final SceneState sceneState;
 	
 	static
 	{
 		triangleVertexBfr = FloatBuffer.wrap(triangleCoords);
 		triangleColorBfr = FloatBuffer.wrap(triangleColors);
 		quadVertexBfr = FloatBuffer.wrap(quadCoords);
+		
+		sceneState = new SceneState();
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -62,7 +63,7 @@ public class GlRenderer implements Renderer {
 		
 		// draw triangle
 		gl.glTranslatef(-1.5f, 0, -6);
-		gl.glRotatef(triangleRot, 0, 1, 0);
+		gl.glRotatef(sceneState.triangleRot, 0, 1, 0);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, triangleVertexBfr);
@@ -74,7 +75,7 @@ public class GlRenderer implements Renderer {
 		// draw quad
 		gl.glLoadIdentity();
 		gl.glTranslatef(1.5f, 0, -6);
-		gl.glRotatef(quadRot, 1, 0, 0);
+		gl.glRotatef(sceneState.quadRot, 1, 0, 0);
 		gl.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBfr);
@@ -82,8 +83,8 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		
 		// update rotations
-		triangleRot += 0.8f;
-		quadRot -= 0.5f;
+		sceneState.triangleRot += 0.8f;
+		sceneState.quadRot -= 0.5f;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {

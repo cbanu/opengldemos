@@ -156,15 +156,7 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private static float xRot;
-	private static float yRot;
-	
-	static float xSpeed;
-	static float ySpeed;
-	
-	private static boolean lighting = false;
-	private static int filter = 2;
-	private static boolean blending = true;
+	static final SceneState sceneState;
 	
 	static
 	{
@@ -181,6 +173,8 @@ public class GlRenderer implements Renderer {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
 		lightDifBfr = FloatBuffer.wrap(lightDif);
 		lightPosBfr = FloatBuffer.wrap(lightPos);
+		
+		sceneState = new SceneState();
 	}
 
 	private void LoadTextures(GL10 gl) {
@@ -245,14 +239,14 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		
 		// update lighting
-		if (lighting) {
+		if (sceneState.lighting) {
 			gl.glEnable(GL10.GL_LIGHTING);
 		} else {
 			gl.glDisable(GL10.GL_LIGHTING);
 		}
 		
 		// update blending
-		if (blending) {
+		if (sceneState.blending) {
 			gl.glEnable(GL10.GL_BLEND);
 			gl.glDisable(GL10.GL_CULL_FACE);
 		} else {
@@ -263,10 +257,10 @@ public class GlRenderer implements Renderer {
 		// draw cube
 		
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(xRot, 1, 0, 0);
-		gl.glRotatef(yRot, 0, 1, 0);
+		gl.glRotatef(sceneState.xRot, 1, 0, 0);
+		gl.glRotatef(sceneState.yRot, 0, 1, 0);
 		
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(filter));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(sceneState.filter));
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -282,8 +276,8 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
 		// update rotations
-		xRot += xSpeed;
-		yRot += ySpeed;
+		sceneState.xRot += sceneState.xSpeed;
+		sceneState.yRot += sceneState.ySpeed;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -297,18 +291,6 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
-	}
-	
-	public static void toggleLighting() {
-		lighting = !lighting;
-	}
-
-	public static void switchToNextFilter() {
-		filter = (filter + 1) % 3;
-	}
-
-	public static void toggleBlending() {
-		blending = !blending;
 	}
 
 }

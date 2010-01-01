@@ -36,15 +36,6 @@ public class GlRenderer implements Renderer {
 	
 	private IntBuffer texturesBuffer;
 	
-	private static float xRot;
-	private static float yRot;
-	static float xSpeed;
-	static float ySpeed;
-	
-	private static boolean lighting = false;
-	private static int filter = 2;
-
-	private static int objectIdx = 1;
 	private static GlCube cube;
 	private static GlCylinder cylinder;
 	private static GlDisk disk;
@@ -53,6 +44,8 @@ public class GlRenderer implements Renderer {
 	private static GlDisk partialDisk;
 	
 	private static GlPlane background;
+
+	static final SceneState sceneState;
 	
 	static {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
@@ -67,6 +60,8 @@ public class GlRenderer implements Renderer {
 		partialDisk = new GlDisk(0.5f, 1.5f, 16, 4, (float) (Math.PI / 4), (float) (7 * Math.PI / 4), true, true);
 		
 		background = new GlPlane(16, 12, true, true);
+		
+		sceneState = new SceneState();
 	}
 
 	private void LoadTextures(GL10 gl) {
@@ -139,7 +134,7 @@ public class GlRenderer implements Renderer {
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		
 		// update lighting
-		if (lighting) {
+		if (sceneState.lighting) {
 			gl.glEnable(GL10.GL_LIGHTING);
 		} else {
 			gl.glDisable(GL10.GL_LIGHTING);
@@ -148,32 +143,32 @@ public class GlRenderer implements Renderer {
 		// draw background
 		gl.glPushMatrix();
 		gl.glTranslatef(0, 0, -10);
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(filter));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(sceneState.filter));
 		background.draw(gl);
 		gl.glPopMatrix();
 		
 		// position object
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(xRot, 1, 0, 0);
-		gl.glRotatef(yRot, 0, 1, 0);
+		gl.glRotatef(sceneState.xRot, 1, 0, 0);
+		gl.glRotatef(sceneState.yRot, 0, 1, 0);
 
 		// compute reflection variables
 		
 		GlVertex vEye = new GlVertex(0, 0, 1);	// eye-vector in world space (eye is in the scene at Znear = 1.0f)
 		GlMatrix mInv = new GlMatrix();			// build the current inverse matrix
-		mInv.rotate(-yRot, 0, 1, 0);
-		mInv.rotate(-xRot, 1, 0, 0);
+		mInv.rotate(-sceneState.yRot, 0, 1, 0);
+		mInv.rotate(-sceneState.xRot, 1, 0, 0);
 		mInv.translate(0, 0, 6);
 		mInv.transform(vEye);					// transform the eye-vector in model space
 
 		GlMatrix mInvRot = new GlMatrix();		// rotation matrix, used for transforming the reflection vector
-		mInvRot.rotate(xRot, 1, 0, 0);
-		mInvRot.rotate(yRot, 0, 1, 0);
+		mInvRot.rotate(sceneState.xRot, 1, 0, 0);
+		mInvRot.rotate(sceneState.yRot, 0, 1, 0);
 		
 		// identify object to draw
 		GlObject object = null;
 		boolean doubleSided = false;
-		switch (objectIdx) {
+		switch (sceneState.objectIdx) {
 		case 0:
 			object = cube;
 			doubleSided = false;
@@ -203,20 +198,20 @@ public class GlRenderer implements Renderer {
 		// adjust rendering parameters
 		if (doubleSided) {
 			gl.glDisable(GL10.GL_CULL_FACE);
-			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, lighting ? GL10.GL_TRUE : GL10.GL_FALSE);
+			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, sceneState.lighting ? GL10.GL_TRUE : GL10.GL_FALSE);
 		} else {
 			gl.glEnable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
 		}
 		
 		// draw object
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + filter));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + sceneState.filter));
 		object.calculateReflectionTexCoords(vEye, mInvRot);
 		object.draw(gl);
 		
 		// update rotations
-		xRot += xSpeed;
-		yRot += ySpeed;
+		sceneState.xRot += sceneState.xSpeed;
+		sceneState.yRot += sceneState.ySpeed;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -230,18 +225,6 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
-	}
-	
-	public static void toggleLighting() {
-		lighting = !lighting;
-	}
-
-	public static void switchToNextFilter() {
-		filter = (filter + 1) % 3;
-	}
-
-	public static void switchToNextObject() {
-		objectIdx = (objectIdx + 1) % 6;
 	}
 	
 }
