@@ -39,9 +39,9 @@ public class GlRenderer implements Renderer {
 	static float ySpeed;
 	
 	private static boolean lighting = false;
-	private static int filter = 0;
+	private static int filter = 2;
 
-	private static int objectIdx;
+	private static int objectIdx = 1;
 	private static GlCube cube;
 	private static GlCylinder cylinder;
 	private static GlDisk disk;

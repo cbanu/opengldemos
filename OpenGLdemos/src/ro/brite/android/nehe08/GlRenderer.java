@@ -161,8 +161,8 @@ public class GlRenderer implements Renderer {
 	static float xSpeed;
 	static float ySpeed;
 	
-	private static boolean lighting = true;
-	private static int filter = 0;
+	private static boolean lighting = false;
+	private static int filter = 2;
 	private static boolean blending = true;
 	
 	static
@@ -223,9 +223,7 @@ public class GlRenderer implements Renderer {
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glClearColor(0, 0, 0, 0);
 
-		gl.glClearDepthf(1.0f);
-		gl.glEnable(GL10.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL10.GL_LEQUAL);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
 		
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		
@@ -241,7 +239,7 @@ public class GlRenderer implements Renderer {
 	}
 
 	public void onDrawFrame(GL10 gl) {
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		

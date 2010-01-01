@@ -167,8 +167,8 @@ public class GlRenderer implements Renderer {
 	static float ySpeed;
 	
 	private static boolean lighting = true;
-	private static int filter = 0;
-	private static int fogFilter = 0;
+	private static int filter = 2;
+	private static int fogFilter = 2;
 	
 	static
 	{

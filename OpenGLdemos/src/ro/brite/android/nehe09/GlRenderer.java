@@ -50,7 +50,7 @@ public class GlRenderer implements Renderer {
 	static float zoom = -20.0f;
 	static float tilt = 90.0f;
 	private static float spin;
-	private static boolean twinkle = true;
+	private static boolean twinkle = false;
 	
 	static
 	{

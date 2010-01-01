@@ -32,6 +32,7 @@ public class GlApp extends Activity {
         gestureDetector = new GestureDetector(this, new GlAppGestureListener(this));
         
         surface = new GLSurfaceView(this);
+        surface.setEGLConfigChooser(false); // no depth buffer needed
         renderer = new GlRenderer(this);
         surface.setRenderer(renderer);
         setContentView(surface);

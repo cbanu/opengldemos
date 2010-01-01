@@ -39,9 +39,9 @@ public class GlRenderer implements Renderer {
 	static float ySpeed;
 	
 	private static boolean lighting = true;
-	private static int filter = 0;
+	private static int filter = 2;
 
-	private static int object;
+	private static int objectIdx = 1;
 	private static GlCube cube;
 	private static GlCylinder cylinder;
 	private static GlDisk disk;
@@ -138,7 +138,7 @@ public class GlRenderer implements Renderer {
 		// draw object
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(filter));
-		switch (object) {
+		switch (objectIdx) {
 		case 0:
 			gl.glEnable(GL10.GL_CULL_FACE);
 			gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_FALSE);
@@ -198,7 +198,7 @@ public class GlRenderer implements Renderer {
 	}
 
 	public static void switchToNextObject() {
-		object = (object + 1) % 6;
+		objectIdx = (objectIdx + 1) % 6;
 	}
 	
 }
