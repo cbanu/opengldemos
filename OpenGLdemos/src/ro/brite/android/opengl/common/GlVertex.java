@@ -1,6 +1,6 @@
-package ro.brite.android.nehe23;
+package ro.brite.android.opengl.common;
 
-class GlVertex {
+public class GlVertex {
 	public float[] v;
 	
 	public GlVertex() {

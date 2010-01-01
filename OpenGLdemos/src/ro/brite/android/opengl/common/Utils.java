@@ -1,4 +1,6 @@
-package ro.brite.android.nehe18;
+package ro.brite.android.opengl.common;
+
+import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -9,7 +11,7 @@ import android.graphics.Matrix;
 import android.opengl.GLUtils;
 
 
-final class Utils {
+public final class Utils {
 
 	private static Matrix yFlipMatrix;
 	
@@ -87,6 +89,40 @@ final class Utils {
 	public static void setXY(float[] vector, int offset, float x, float y) {
 		vector[offset] = x;
 		vector[offset + 1] = y;
+	}
+
+	public static void setSphereEnvTexCoords(GlVertex vEye, GlMatrix mInvRot,
+			FloatBuffer vertexBuffer, int vertexOffset,
+			FloatBuffer normalBuffer, int normalOffset,
+			FloatBuffer texCoordBuffer, int texCoordOffset) {
+		
+		GlVertex vN = getVertex(normalBuffer, normalOffset);
+		GlVertex vP = getVertex(vertexBuffer, vertexOffset);
+		
+		GlVertex vE = new GlVertex(vEye);
+		vE.subtract(vP);
+		vE.normalize();
+
+		float cos = GlVertex.dotProduct(vE, vN);
+		GlVertex vR = new GlVertex(vN);
+		vR.scale(2 * cos);
+		vR.subtract(vE);
+		
+		mInvRot.transform(vR);
+		
+		float p = (float)Math.sqrt(vR.v[0] * vR.v[0] + vR.v[1] * vR.v[1] + (vR.v[2] + 1) * (vR.v[2] + 1));
+		float s = (p != 0) ? 0.5f * (vR.v[0] / p + 1) : 0;
+		float t = (p != 0) ? 0.5f * (vR.v[1] / p + 1) : 0;
+		
+		texCoordBuffer.put(texCoordOffset, s);
+		texCoordBuffer.put(texCoordOffset + 1, t);
+	}
+	
+	public static GlVertex getVertex(FloatBuffer buffer, int index) {
+		float x = buffer.get(index);
+		float y = buffer.get(index + 1);
+		float z = buffer.get(index + 2);
+		return new GlVertex(x, y, z);
 	}
 	
 }

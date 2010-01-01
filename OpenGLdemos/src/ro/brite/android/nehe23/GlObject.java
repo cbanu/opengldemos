@@ -1,5 +1,8 @@
 package ro.brite.android.nehe23;
 
+import ro.brite.android.opengl.common.GlVertex;
+import ro.brite.android.opengl.common.GlMatrix;
+
 import javax.microedition.khronos.opengles.GL10;
 
 

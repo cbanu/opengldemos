@@ -4,6 +4,9 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import ro.brite.android.opengl.common.GlMatrix;
+import ro.brite.android.opengl.common.GlVertex;
+
 
 class GlPlane extends GlObject {
 	

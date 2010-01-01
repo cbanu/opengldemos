@@ -7,7 +7,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import ro.brite.android.opengl.R;
-import ro.brite.android.nehe09.Utils;
+import ro.brite.android.opengl.common.Utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;

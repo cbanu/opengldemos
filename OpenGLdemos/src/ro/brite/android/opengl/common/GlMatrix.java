@@ -1,6 +1,6 @@
-package ro.brite.android.nehe23;
+package ro.brite.android.opengl.common;
 
-class GlMatrix {
+public class GlMatrix {
 	
 	private float[][] m;
 	

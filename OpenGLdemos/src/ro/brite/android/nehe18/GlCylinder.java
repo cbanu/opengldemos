@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import ro.brite.android.opengl.common.Utils;
+
 
 class GlCylinder extends GlObject {
 	
