@@ -1,5 +1,7 @@
 package ro.brite.android.opengl.common;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -18,6 +20,41 @@ public final class Utils {
 	static {
 		yFlipMatrix = new Matrix();
 		yFlipMatrix.postScale(1, -1); // flip Y axis
+		
+		System.loadLibrary("opengl-math");
+	}
+	
+	public static native void computeSphereEnvTexCoords(
+		    FloatBuffer vEyeBuff, FloatBuffer mInvRotBuff,
+		    FloatBuffer coordsBuf, FloatBuffer normalsBuff, FloatBuffer texCoordsBuff,
+		    int length);
+	
+	public static FloatBuffer wrapDirect(float[] v) {
+		ByteBuffer buff = ByteBuffer.allocateDirect(v.length * Float.SIZE / Byte.SIZE);
+		buff.order(ByteOrder.nativeOrder());
+		
+		FloatBuffer data = buff.asFloatBuffer();
+		data.put(v);
+		data.position(0);
+		
+		return data;
+	}
+	
+	public static FloatBuffer wrapDirect(float[][] m) {
+		int totalLength = 0;
+		for (int i = 0; i < m.length; i++)
+			totalLength += m[i].length;
+		
+		ByteBuffer buff = ByteBuffer.allocateDirect(totalLength * Float.SIZE / Byte.SIZE);
+		buff.order(ByteOrder.nativeOrder());
+		
+		FloatBuffer data = buff.asFloatBuffer();
+		for (int i = 0; i < m.length; i++)
+			data.put(m[i]);
+		
+		data.position(0);
+		
+		return data;
 	}
 	
 	public static Bitmap getTextureFromBitmapResource(Context context, int resourceId) {
@@ -83,6 +120,7 @@ public final class Utils {
 
 	public static void setXYZn(float[] vector, int offset, float x, float y, float z) {
 		float r = (float)Math.sqrt(x * x + y * y + z * z);
+		if (r == 0.0f) r = 1.0f;
 		setXYZ(vector, offset, x / r, y / r, z / r);
 	}
 	
@@ -91,38 +129,4 @@ public final class Utils {
 		vector[offset + 1] = y;
 	}
 
-	public static void setSphereEnvTexCoords(GlVertex vEye, GlMatrix mInvRot,
-			FloatBuffer vertexBuffer, int vertexOffset,
-			FloatBuffer normalBuffer, int normalOffset,
-			FloatBuffer texCoordBuffer, int texCoordOffset) {
-		
-		GlVertex vN = getVertex(normalBuffer, normalOffset);
-		GlVertex vP = getVertex(vertexBuffer, vertexOffset);
-		
-		GlVertex vE = new GlVertex(vEye);
-		vE.subtract(vP);
-		vE.normalize();
-
-		float cos = GlVertex.dotProduct(vE, vN);
-		GlVertex vR = new GlVertex(vN);
-		vR.scale(2 * cos);
-		vR.subtract(vE);
-		
-		mInvRot.transform(vR);
-		
-		float p = (float)Math.sqrt(vR.v[0] * vR.v[0] + vR.v[1] * vR.v[1] + (vR.v[2] + 1) * (vR.v[2] + 1));
-		float s = (p != 0) ? 0.5f * (vR.v[0] / p + 1) : 0;
-		float t = (p != 0) ? 0.5f * (vR.v[1] / p + 1) : 0;
-		
-		texCoordBuffer.put(texCoordOffset, s);
-		texCoordBuffer.put(texCoordOffset + 1, t);
-	}
-	
-	public static GlVertex getVertex(FloatBuffer buffer, int index) {
-		float x = buffer.get(index);
-		float y = buffer.get(index + 1);
-		float z = buffer.get(index + 2);
-		return new GlVertex(x, y, z);
-	}
-	
 }

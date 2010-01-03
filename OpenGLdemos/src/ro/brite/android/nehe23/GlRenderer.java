@@ -52,12 +52,12 @@ public class GlRenderer implements Renderer {
 		lightDifBfr = FloatBuffer.wrap(lightDif);
 		lightPosBfr = FloatBuffer.wrap(lightPos);
 
-		cube = new GlCube(1.0f, true, true);
-		cylinder = new GlCylinder(1.0f, 1.0f, 3.0f, 16, 4, true, true);
-		disk = new GlDisk(0.5f, 1.5f, 16, 4, true, true);
-		sphere = new GlSphere(1.3f, 16, 8, true, true);
-		cone = new GlCylinder(1.0f, 0.0f, 3.0f, 16, 4, true, true);
-		partialDisk = new GlDisk(0.5f, 1.5f, 16, 4, (float) (Math.PI / 4), (float) (7 * Math.PI / 4), true, true);
+		cube = new GlCube(1.0f);
+		cylinder = new GlCylinder(1.0f, 1.0f, 3.0f, 16, 4);
+		disk = new GlDisk(0.5f, 1.5f, 16, 4);
+		sphere = new GlSphere(1.3f, 16, 8);
+		cone = new GlCylinder(1.0f, 0.0f, 3.0f, 16, 4);
+		partialDisk = new GlDisk(0.5f, 1.5f, 16, 4, (float) (Math.PI / 4), (float) (7 * Math.PI / 4));
 		
 		background = new GlPlane(16, 12, true, true);
 		

@@ -1,65 +1,67 @@
 package ro.brite.android.opengl.common;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 public class GlVertex {
-	public float[] v;
 	
+	static {
+		System.loadLibrary("opengl-math");
+	}
+	
+	private static native void set(FloatBuffer fb, float x, float y, float z, float w);
+	private static native void assign(FloatBuffer fbDst, FloatBuffer fbSrc);
+	private static native void add(FloatBuffer fbDst, FloatBuffer fbSrc);
+	private static native void subtract(FloatBuffer fbDst, FloatBuffer fbSrc);
+	private static native void normalize(FloatBuffer fb);
+	private static native void scale(FloatBuffer fb, float factor);
+	private static native float dotProduct(FloatBuffer a, FloatBuffer b);
+	
+	public FloatBuffer data;
+
+	private void allocate() {
+		ByteBuffer mem = ByteBuffer.allocateDirect(4 * Float.SIZE / Byte.SIZE);
+		mem.order(ByteOrder.nativeOrder());
+		data = mem.asFloatBuffer();
+	}
+
 	public GlVertex() {
-		v = new float[4];
-		v[3] = 1;
+		allocate();
+		GlVertex.set(data, 0.0f, 0.0f, 0.0f, 1.0f);
 	}
 	
 	public GlVertex(float x, float y, float z) {
-		v = new float[4];
-		v[0] = x;
-		v[1] = y;
-		v[2] = z;
-		v[3] = 1;
+		allocate();
+		GlVertex.set(data, x, y, z, 1.0f);
 	}
 	
 	public GlVertex(GlVertex vertex) {
-		v = new float[4];
-		assign(vertex);
+		allocate();
+		GlVertex.assign(data, vertex.data);
 	}
-	
+
 	public void assign(GlVertex vertex) {
-		for (int i = 0; i < 4; i++) {
-			v[i] = vertex.v[i];
-		}
+		GlVertex.assign(data, vertex.data);
 	}
 
 	public void add(GlVertex vertex) {
-		for (int i = 0; i < 3; i++) {
-			v[i] += vertex.v[i];
-		}
+		GlVertex.add(data, vertex.data);
 	}
 
 	public void subtract(GlVertex vertex) {
-		for (int i = 0; i < 3; i++) {
-			v[i] -= vertex.v[i];
-		}
+		GlVertex.subtract(data, vertex.data);
 	}
 	
 	public void normalize() {
-		v[3] = (float)Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-		if (v[3] != 0) {
-			v[0] /= v[3];
-			v[1] /= v[3];
-			v[2] /= v[3];
-			v[3] = 1;
-		}
+		GlVertex.normalize(data);
 	}
 	
 	public void scale(float factor) {
-		for (int i = 0; i < 3; i++) {
-			v[i] *= factor;
-		}
+		GlVertex.scale(data, factor);
 	}
 	
 	public static float dotProduct(GlVertex a, GlVertex b) {
-		float s = 0;
-		for (int i = 0; i < 3; i++) {
-			s += a.v[i] * b.v[i];
-		}
-		return s;
+		return GlVertex.dotProduct(a.data, b.data);
 	}
 }

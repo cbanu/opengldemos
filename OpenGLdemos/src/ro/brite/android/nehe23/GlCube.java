@@ -128,92 +128,55 @@ class GlCube extends GlObject {
 		},
 	};
 
-	private final static FloatBuffer[] cubeNormalBfr;
+	private final static FloatBuffer normalsBfr;
 	
 	static {
-		cubeNormalBfr = new FloatBuffer[6];
-		for (int i = 0; i < 6; i++)
-		{
-			cubeNormalBfr[i] = FloatBuffer.wrap(cubeNormalCoords[i]);
-		}
+		normalsBfr = Utils.wrapDirect(cubeNormalCoords);
 	}
 	
 	private float size;
 	
-	private boolean useNormals;
-	private boolean useTexCoords;
+	private FloatBuffer coordsBfr;
+	private FloatBuffer texCoordsBfr;
 	
-	private FloatBuffer[] cubeVertexBfr;
-	private FloatBuffer[] cubeTextureBfr;
-	
-	public GlCube(float size, boolean useNormals, boolean useTexCoords) {
+	public GlCube(float size) {
 		this.size = size;
-		this.useNormals = useNormals;
-		this.useTexCoords = useTexCoords;
 		generateData();
 	}
 	
 	private void generateData() {
-		cubeTextureBfr = new FloatBuffer[6];
-		for (int i = 0; i < 6; i++)
+		coordsBfr = Utils.wrapDirect(cubeVertexCoordsTemplate);
+		for (int i = 0; i < coordsBfr.capacity(); i++)
 		{
-			cubeTextureBfr[i] = FloatBuffer.wrap(cubeTextureCoords[i]);
+			coordsBfr.put(i, size * coordsBfr.get(i));
 		}
-		
-		cubeVertexBfr = new FloatBuffer[cubeVertexCoordsTemplate.length];
-		
-		float[] vertices;
-		for (int i = 0; i < cubeVertexCoordsTemplate.length; i++)
-		{
-			vertices = new float[cubeVertexCoordsTemplate[i].length];
-			for (int j = 0; j < cubeVertexCoordsTemplate[i].length; j++)
-			{
-				vertices[j] = cubeVertexCoordsTemplate[i][j] * size;
-			}
-			cubeVertexBfr[i] = FloatBuffer.wrap(vertices);
-		}
+
+		texCoordsBfr = Utils.wrapDirect(cubeTextureCoords);
 	}
 
 	@Override
 	public void draw(GL10 gl) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		if (useNormals) {
-			gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-		}
-		if (useTexCoords) {
-			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		}
+		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
-		for (int i = 0; i < 6; i++) { // draw each face
-			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, cubeVertexBfr[i]);
-			if (useNormals) {
-				gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
-			}
-			if (useTexCoords) {
-				gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
-			}
-			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, coordsBfr);
+		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalsBfr);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texCoordsBfr);
+
+		for (int i = 0; i < 6; i++) {
+			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 4 * i, 4);
 		}
 		
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		if (useNormals) {
-			gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
-		}
-		if (useTexCoords) {
-			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		}
+		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 	}
 	
 	@Override
 	public void calculateReflectionTexCoords(GlVertex vEye, GlMatrix mInvRot) {
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 4; j++) {
-				Utils.setSphereEnvTexCoords(vEye, mInvRot,
-						cubeVertexBfr[i], 3 * j,
-						cubeNormalBfr[i], 3 * j,
-						cubeTextureBfr[i], 2 * j);
-			}
-		}
+		Utils.computeSphereEnvTexCoords(vEye.data, mInvRot.data,
+				coordsBfr, normalsBfr, texCoordsBfr, 24);
 	}
 	
 }

@@ -13,131 +13,97 @@ class GlDisk extends GlObject {
 	
 	private float innerRadius;
 	private float outerRadius;
-	private  int slices;
-	private int loops;
+	private int nrSlices;
+	private int nrLoops;
 	private float startAngle;
 	private float stopAngle;
 	
-	private boolean normals;
-	private boolean texCoords;
+	private FloatBuffer coordsBuffer;
+	private FloatBuffer normalsBuffer;
+	private FloatBuffer texCoordsBuffer;
 	
-	private FloatBuffer[] loopsBuffers;
-	private FloatBuffer[] normalsBuffers;
-	private FloatBuffer[] texCoordsBuffers;
-	
-	public GlDisk(float innerRadius, float outerRadius, int slices, int loops, boolean genNormals, boolean genTexCoords) {
-		this(innerRadius, outerRadius, slices, loops, 0.0f, (float)(2 * Math.PI), genNormals, genTexCoords);
+	public GlDisk(float innerRadius, float outerRadius, int slices, int loops) {
+		this(innerRadius, outerRadius, slices, loops, 0.0f, (float)(2 * Math.PI));
 	}
 	
-	public GlDisk(float innerRadius, float outerRadius, int slices, int loops, float startAngle, float stopAngle, boolean genNormals, boolean genTexCoords) {
+	public GlDisk(float innerRadius, float outerRadius, int slices, int loops, float startAngle, float stopAngle) {
 		this.innerRadius = innerRadius;
 		this.outerRadius = outerRadius;
-		this.slices = slices;
-		this.loops = loops;
+		this.nrSlices = slices;
+		this.nrLoops = loops;
 		this.startAngle = startAngle;
 		this.stopAngle = stopAngle;
-		this.normals = genNormals;
-		this.texCoords = genTexCoords;
 		generateData();
 	}
 	
 	private void generateData() {
 		
-		loopsBuffers = new FloatBuffer[loops];
-		if (normals) {
-			normalsBuffers = new FloatBuffer[loops];
-		}
-		if (texCoords) {
-			texCoordsBuffers = new FloatBuffer[loops];
-		}
+		float[] vertexCoords = new float[3 * nrLoops * 2 * (nrSlices + 1)];
+		float[] normalCoords = new float[3 * nrLoops * 2 * (nrSlices + 1)];
+		float[] textureCoords = new float[2 * nrLoops * 2 * (nrSlices + 1)];
 		
-		for (int i = 0; i < loops; i++) {
+		for (int i = 0; i < nrLoops; i++) {
 			
-			float[] vertexCoords = new float[3 * 2 * (slices + 1)];
-			float[] normalCoords = new float[3 * 2 * (slices + 1)];
-			float[] textureCoords = new float[2 * 2 * (slices + 1)];
+			float r0 = innerRadius + (outerRadius - innerRadius) * i / nrLoops;
+			float r1 = innerRadius + (outerRadius - innerRadius) * (i + 1) / nrLoops;
 			
-			float r0 = innerRadius + (outerRadius - innerRadius) * i / loops;
-			float r1 = innerRadius + (outerRadius - innerRadius) * (i + 1) / loops;
+			int elemIdx = i * 2 * (nrSlices + 1);
 			
-			for (int j = 0; j <= slices; j++) {
+			for (int j = 0; j <= nrSlices; j++) {
 				
-				double alpha = startAngle + (stopAngle - startAngle) * j / slices;
+				double alpha = startAngle + (stopAngle - startAngle) * j / nrSlices;
 				
 				float sinAlpha = (float) Math.sin(alpha);
 				float cosAlpha = (float) Math.cos(alpha);
 				
-				Utils.setXYZ(vertexCoords, 6 * j,
+				Utils.setXYZ(vertexCoords, 3 * elemIdx + 3 * 2 * j,
 						cosAlpha * r0, sinAlpha * r0, 0);
-				Utils.setXYZ(vertexCoords, 6 * j + 3,
+				Utils.setXYZ(vertexCoords, 3 * elemIdx + 3 * 2 * j + 3,
 						cosAlpha * r1, sinAlpha * r1, 0);
-				if (normals) {
-					Utils.setXYZ(normalCoords, 6 * j,
-							0, 0, 1);
-					Utils.setXYZ(normalCoords, 6 * j + 3,
-							0, 0, 1);
-				}
-				if (texCoords) {
-					Utils.setXY(textureCoords, 4 * j,
-							((float)j) / slices, ((float)i) / loops);
-					Utils.setXY(textureCoords, 4 * j + 2,
-							((float)j) / slices, ((float)i + 1) / loops);
-				}
-			}
-			
-			loopsBuffers[i] = FloatBuffer.wrap(vertexCoords);
-			if (normals) {
-				normalsBuffers[i] = FloatBuffer.wrap(normalCoords);
-			}
-			if (texCoords) {
-				texCoordsBuffers[i] = FloatBuffer.wrap(textureCoords);
+
+				Utils.setXYZ(normalCoords, 3 * elemIdx + 3 * 2 * j,
+						0, 0, 1);
+				Utils.setXYZ(normalCoords, 3 * elemIdx + 3 * 2 * j + 3,
+						0, 0, 1);
+
+				Utils.setXY(textureCoords, 2 * elemIdx + 2 * 2 * j,
+						((float)j) / nrSlices, ((float)i) / nrLoops);
+				Utils.setXY(textureCoords, 2 * elemIdx + 2 * 2 * j + 2,
+						((float)j) / nrSlices, ((float)i + 1) / nrLoops);
 			}
 		}
+
+		coordsBuffer = Utils.wrapDirect(vertexCoords);
+		normalsBuffer = Utils.wrapDirect(normalCoords);
+		texCoordsBuffer = Utils.wrapDirect(textureCoords);
 	}
 	
 	
 	@Override
 	public void draw(GL10 gl) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		if (normals) {
-			gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-		}
-		if (texCoords) {
-			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		}
+		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
-		for (int i = 0; i < loops; i++) { // draw each loop
-			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, loopsBuffers[i]);
-			if (normals) {
-				gl.glNormalPointer(GL10.GL_FLOAT, 0, normalsBuffers[i]);
-			}
-			if (texCoords) {
-				gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texCoordsBuffers[i]);
-			}
-			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 2 * (slices + 1));
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, coordsBuffer);
+		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalsBuffer);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texCoordsBuffer);
+		
+		for (int i = 0; i < nrLoops; i++) {
+			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, i * 2 * (nrSlices + 1), 2 * (nrSlices + 1));
 		}
 		
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		if (normals) {
-			gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
-		}
-		if (texCoords) {
-			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		}
+		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 	}
 	
 	@Override
 	public void calculateReflectionTexCoords(GlVertex vEye, GlMatrix mInvRot) {
-		for (int i = 0; i < loops; i++) {
-			for (int j = 0; j <= slices; j++) {
-				for (int k = 0; k < 2; k++) {
-					Utils.setSphereEnvTexCoords(vEye, mInvRot,
-							loopsBuffers[i], 6 * j + 3 * k,
-							normalsBuffers[i], 6 * j + 3 * k,
-							texCoordsBuffers[i], 4 * j + 2 * k);
-				}
-			}
-		}
+		Utils.computeSphereEnvTexCoords(
+				vEye.data, mInvRot.data,
+				coordsBuffer, normalsBuffer, texCoordsBuffer,
+				nrLoops * 2 * (nrSlices + 1));
 	}
 	
 }
