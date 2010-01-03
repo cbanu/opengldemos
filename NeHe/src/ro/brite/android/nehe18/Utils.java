@@ -15,7 +15,7 @@ final class Utils {
 	
 	static {
 		yFlipMatrix = new Matrix();
-		yFlipMatrix.postScale(-1, 1); // flip Y axis
+		yFlipMatrix.postScale(1, -1); // flip Y axis
 	}
 	
 	public static Bitmap getTextureFromBitmapResource(Context context, int resourceId) {
