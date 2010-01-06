@@ -2,6 +2,9 @@
 #include <math.h>
 #include <string.h>
 
+// column based matrix index
+#define MIDX(i, j) (4 * j + i)
+
 // *** GlVertex *** //
 
 void vertexNormalize(float* v)
@@ -146,7 +149,7 @@ void matrixMakeIdentity(float* data)
   int i, j;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      data[4 * i + j] = (i != j) ? 0 : 1;
+      data[MIDX(i,j)] = (i != j) ? 0 : 1;
 }
 
 
@@ -165,10 +168,28 @@ void matrixMultiply(float* dst, float* src)
   int i, j, k;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++) {
-      int tmpIdx = 4 * i + j;
+      int tmpIdx = MIDX(i,j);
       tmp[tmpIdx] = 0.0f;
       for (k = 0; k < 4; k++) {
-        tmp[tmpIdx] += dst[4 * i + k] * src[4 * k + j];
+        tmp[tmpIdx] += dst[MIDX(i,k)] * src[MIDX(k,j)];
+      }
+    }
+
+  matrixAssign(dst, tmp);
+}
+
+
+void matrixPreMultiply(float* dst, float* src)
+{
+  float tmp[16];
+
+  int i, j, k;
+  for (i = 0; i < 4; i++)
+    for (j = 0; j < 4; j++) {
+      int tmpIdx = MIDX(i,j);
+      tmp[tmpIdx] = 0.0f;
+      for (k = 0; k < 4; k++) {
+        tmp[tmpIdx] += src[MIDX(i,k)] * dst[MIDX(k,j)];
       }
     }
 
@@ -183,11 +204,27 @@ void matrixTransform(float* m, float* v)
   for (i = 0; i < 4; i++) {
     tmp[i] = 0.0f;
     for (j = 0; j < 4; j++) {
-      tmp[i] += m[4 * i + j] * v[j];
+      tmp[i] += m[MIDX(i,j)] * v[j];
     }
   }
   
   vertexAssign(v, tmp);
+}
+
+
+void matrixTranspose(float* m)
+{
+  jfloat tmp;
+  int i, j;
+  for (i = 0; i < 4; i++) {
+    for (j = 0; j < 4; j++) {
+		if (i != j) {
+		  tmp = m[MIDX(i,j)];
+		  m[MIDX(i,j)] = m[MIDX(j,i)];
+		  m[MIDX(j,i)] = tmp;
+		}
+	}
+  }
 }
 
 
@@ -224,6 +261,17 @@ Java_ro_brite_android_opengl_common_GlMatrix_multiply(
 
 
 void
+Java_ro_brite_android_opengl_common_GlMatrix_premultiply(
+    JNIEnv* env, jobject thiz,
+    jobject dstBuff, jobject srcBuff)
+{
+  jfloat* dstData = (*env)->GetDirectBufferAddress(env, dstBuff);
+  jfloat* srcData = (*env)->GetDirectBufferAddress(env, srcBuff);
+  matrixPreMultiply(dstData, srcData);
+}
+
+
+void
 Java_ro_brite_android_opengl_common_GlMatrix_translate(
     JNIEnv* env, jobject thiz,
     jobject buff, jfloat dx, jfloat dy, jfloat dz)
@@ -232,9 +280,9 @@ Java_ro_brite_android_opengl_common_GlMatrix_translate(
   jfloat tr[16];
 
   matrixMakeIdentity(tr);
-  tr[0 * 4 + 3] = dx;
-  tr[1 * 4 + 3] = dy;
-  tr[2 * 4 + 3] = dz;
+  tr[MIDX(0,3)] = dx;
+  tr[MIDX(1,3)] = dy;
+  tr[MIDX(2,3)] = dz;
   matrixMultiply(data, tr);
 }
 
@@ -259,25 +307,25 @@ Java_ro_brite_android_opengl_common_GlMatrix_rotate(
 
   float rot[16];
 
-  rot[0] = x * x * _c + c;
-  rot[1] = x * y * _c - z * s;
-  rot[2] = x * z * _c + y * s;
-  rot[3] = 0.0f;
+  rot[MIDX(0,0)] = x * x * _c + c;
+  rot[MIDX(0,1)] = x * y * _c - z * s;
+  rot[MIDX(0,2)] = x * z * _c + y * s;
+  rot[MIDX(0,3)] = 0.0f;
 
-  rot[4] = y * x * _c + z * s;
-  rot[5] = y * y * _c + c;
-  rot[6] = y * z * _c - x * s;
-  rot[7] = 0.0f;
+  rot[MIDX(1,0)] = y * x * _c + z * s;
+  rot[MIDX(1,1)] = y * y * _c + c;
+  rot[MIDX(1,2)] = y * z * _c - x * s;
+  rot[MIDX(1,3)] = 0.0f;
 
-  rot[8] = z * x * _c - y * s;
-  rot[9] = z * y * _c + x * s;
-  rot[10] = z * z * _c + c;
-  rot[11] = 0.0f;
+  rot[MIDX(2,0)] = z * x * _c - y * s;
+  rot[MIDX(2,1)] = z * y * _c + x * s;
+  rot[MIDX(2,2)] = z * z * _c + c;
+  rot[MIDX(2,3)] = 0.0f;
 
-  rot[12] = 0.0f;
-  rot[13] = 0.0f;
-  rot[14] = 0.0f;
-  rot[15] = 1.0f;
+  rot[MIDX(3,0)] = 0.0f;
+  rot[MIDX(3,1)] = 0.0f;
+  rot[MIDX(3,2)] = 0.0f;
+  rot[MIDX(3,3)] = 1.0f;
 
   matrixMultiply(data, rot);
 }
@@ -291,6 +339,16 @@ Java_ro_brite_android_opengl_common_GlMatrix_transform(
   jfloat* m = (*env)->GetDirectBufferAddress(env, matrixBuff);
   jfloat* v = (*env)->GetDirectBufferAddress(env, vertexBuff);
   matrixTransform(m, v);
+}
+
+
+void
+Java_ro_brite_android_opengl_common_GlMatrix_transpose(
+    JNIEnv* env, jobject thiz,
+    jobject matrixBuff)
+{
+  jfloat* m = (*env)->GetDirectBufferAddress(env, matrixBuff);
+  matrixTranspose(m);
 }
 
 
