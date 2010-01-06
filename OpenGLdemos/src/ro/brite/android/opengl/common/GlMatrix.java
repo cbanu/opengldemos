@@ -13,9 +13,11 @@ public class GlMatrix {
 	private static native void identity(FloatBuffer fb);
 	private static native void assign(FloatBuffer fbDst, FloatBuffer fbSrc);
 	private static native void multiply(FloatBuffer fbDst, FloatBuffer fbSrc);
+	private static native void premultiply(FloatBuffer fbDst, FloatBuffer fbSrc);
 	private static native void translate(FloatBuffer fb, float dx, float dy, float dz);
 	private static native void rotate(FloatBuffer fb, float angle, float x, float y, float z);
 	private static native void transform(FloatBuffer matrixBuff, FloatBuffer vertexBuff);
+	private static native void transpose(FloatBuffer matrixBuff);
 	
 	public FloatBuffer data;
 
@@ -42,6 +44,10 @@ public class GlMatrix {
 		GlMatrix.multiply(data, matrix.data);
 	}
 	
+	public void premultiply(GlMatrix matrix) {
+		GlMatrix.premultiply(data, matrix.data);
+	}
+	
 	public void translate(float dx, float dy, float dz) {
 		GlMatrix.translate(data, dx, dy, dz);
 	}
@@ -52,6 +58,10 @@ public class GlMatrix {
 	
 	public void transform(GlVertex vertex) {
 		GlMatrix.transform(data, vertex.data);
+	}
+	
+	public void transpose() {
+		GlMatrix.transpose(data);
 	}
 	
 }
