@@ -157,6 +157,7 @@ public class GlRenderer implements Renderer {
 	private IntBuffer texturesBuffer;
 	
 	static final SceneState sceneState;
+	private long lastMillis;
 	
 	static
 	{
@@ -257,8 +258,8 @@ public class GlRenderer implements Renderer {
 		// draw cube
 		
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(sceneState.xRot, 1, 0, 0);
-		gl.glRotatef(sceneState.yRot, 0, 1, 0);
+
+		sceneState.rotateModel(gl);
 		
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(sceneState.filter));
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -275,9 +276,19 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
+		// get current millis
+		long currentMillis = System.currentTimeMillis();
+		
 		// update rotations
-		sceneState.xRot += sceneState.xSpeed;
-		sceneState.yRot += sceneState.ySpeed;
+		if (lastMillis != 0) {
+			long delta = currentMillis - lastMillis;
+			sceneState.dx += sceneState.dxSpeed * delta;
+			sceneState.dy += sceneState.dySpeed * delta;
+			sceneState.dampenSpeed(delta);
+		}
+		
+		// update millis
+		lastMillis = currentMillis;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {

@@ -1,14 +1,12 @@
 package ro.brite.android.nehe07;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Toast;
 
 
 public class GlApp extends Activity {
@@ -17,26 +15,26 @@ public class GlApp extends Activity {
 	private GlRenderer renderer;
 	
 	private GestureDetector gestureDetector;
-	private static boolean fullscreen;
+	
+	private static boolean toasted;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        if (fullscreen) {
-        	requestWindowFeature(Window.FEATURE_NO_TITLE);  
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-        	WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-        
-        gestureDetector = new GestureDetector(this, new GlAppGestureListener(this));
+        gestureDetector = new GestureDetector(this, new GlAppGestureListener());
         
         surface = new GLSurfaceView(this);
         renderer = new GlRenderer(this);
         surface.setRenderer(renderer);
         setContentView(surface);
+        
+        if (!toasted) {
+        	Toast.makeText(this, "touch and drag to rotate object", Toast.LENGTH_LONG).show();
+        	toasted = true;
+        }
     }
-
+    
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -111,33 +109,12 @@ public class GlApp extends Activity {
 
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener
     {
-    	private GlApp glApp;
-    	
-    	public GlAppGestureListener(GlApp glApp) {
-    		this.glApp = glApp;
-    	}
-
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			// measure speed in milliseconds
 			GlRenderer.sceneState.dxSpeed = velocityX / 1000;
 			GlRenderer.sceneState.dySpeed = velocityY / 1000;
 			return super.onFling(e1, e2, velocityX, velocityY);
-		}
-
-		@Override
-		public boolean onDoubleTap(MotionEvent e) {
-			// toggle fullscreen flag
-			GlApp.fullscreen = !GlApp.fullscreen;
-			
-			// start a new one
-			Intent intent = new Intent(glApp, GlApp.class);
-			startActivity(intent);
-
-			// close current activity
-			glApp.finish();
-			
-			return true;
 		}
     }
 	

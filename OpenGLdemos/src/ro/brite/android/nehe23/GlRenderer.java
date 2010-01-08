@@ -46,6 +46,7 @@ public class GlRenderer implements Renderer {
 	private static GlPlane background;
 
 	static final SceneState sceneState;
+	private long lastMillis;
 	
 	static {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
@@ -124,8 +125,13 @@ public class GlRenderer implements Renderer {
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
 	}
-
+	
 	public void onDrawFrame(GL10 gl) {
+		synchronized (sceneState) {
+			// freeze scene state variables
+			sceneState.takeDataSnapshot();
+		}
+		
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
@@ -147,23 +153,22 @@ public class GlRenderer implements Renderer {
 		background.draw(gl);
 		gl.glPopMatrix();
 		
-		// position object
-		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(sceneState.xRot, 1, 0, 0);
-		gl.glRotatef(sceneState.yRot, 0, 1, 0);
-
-		// compute reflection variables
-		
-		GlVertex vEye = new GlVertex(0, 0, 1);	// eye-vector in world space (eye is in the scene at Znear = 1.0f)
-		GlMatrix mInv = new GlMatrix();			// build the current inverse matrix
-		mInv.rotate(-sceneState.yRot, 0, 1, 0);
-		mInv.rotate(-sceneState.xRot, 1, 0, 0);
-		mInv.translate(0, 0, 6);
-		mInv.transform(vEye);					// transform the eye-vector in model space
-
-		GlMatrix mInvRot = new GlMatrix();		// rotation matrix, used for transforming the reflection vector
-		mInvRot.rotate(sceneState.xRot, 1, 0, 0);
-		mInvRot.rotate(sceneState.yRot, 0, 1, 0);
+		GlVertex vEye;
+		GlMatrix mRot;
+		synchronized (sceneState) {
+			// position object
+			gl.glTranslatef(0, 0, -6);
+			sceneState.rotateModel(gl);
+	
+			// compute reflection variables
+			
+			vEye = new GlVertex(0, 0, 1);						// eye-vector in world space (eye is in the scene at Znear = 1.0f)
+			GlMatrix mInv = sceneState.getInverseRotation();	// build the current inverse matrix
+			mInv.translate(0, 0, 6);
+			mInv.transform(vEye);								// transform the eye-vector in model space
+	
+			mRot = sceneState.getRotation();					// rotation matrix, used for transforming the reflection vector
+		}
 		
 		// identify object to draw
 		GlObject object = null;
@@ -206,12 +211,24 @@ public class GlRenderer implements Renderer {
 		
 		// draw object
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(3 + sceneState.filter));
-		object.calculateReflectionTexCoords(vEye, mInvRot);
+		object.calculateReflectionTexCoords(vEye, mRot);
 		object.draw(gl);
 		
+		// get current millis
+		long currentMillis = System.currentTimeMillis();
+		
 		// update rotations
-		sceneState.xRot += sceneState.xSpeed;
-		sceneState.yRot += sceneState.ySpeed;
+		if (lastMillis != 0) {
+			long delta = currentMillis - lastMillis;
+			synchronized (sceneState) {
+				sceneState.dx += sceneState.dxSpeed * delta;
+				sceneState.dy += sceneState.dySpeed * delta;
+				sceneState.dampenSpeed(delta);
+			}
+		}
+		
+		// update millis
+		lastMillis = currentMillis;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {

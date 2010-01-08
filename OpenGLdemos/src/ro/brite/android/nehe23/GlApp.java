@@ -1,14 +1,12 @@
 package ro.brite.android.nehe23;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Toast;
 
 
 public class GlApp extends Activity {
@@ -17,25 +15,24 @@ public class GlApp extends Activity {
 	private GlRenderer renderer;
 	
 	private GestureDetector gestureDetector;
-	private static boolean fullscreen;
+
+	private static boolean toasted;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        if (fullscreen) {
-        	requestWindowFeature(Window.FEATURE_NO_TITLE);  
-        	getWindow().setFlags(
-        			WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-        			WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-        
-        gestureDetector = new GestureDetector(this, new GlAppGestureListener(this));
+        gestureDetector = new GestureDetector(this, new GlAppGestureListener());
         
         surface = new GLSurfaceView(this);
         renderer = new GlRenderer(this);
         surface.setRenderer(renderer);
         setContentView(surface);
+        
+        if (!toasted) {
+        	Toast.makeText(this, "double-tap to change object", Toast.LENGTH_LONG).show();
+        	toasted = true;
+        }
     }
 
 	@Override
@@ -64,54 +61,83 @@ public class GlApp extends Activity {
 			GlRenderer.sceneState.switchToNextObject();
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			GlRenderer.sceneState.xSpeed = 0.0f;
-			GlRenderer.sceneState.ySpeed = 0.0f;
+			synchronized (GlRenderer.sceneState) {
+				GlRenderer.sceneState.saveRotation();
+				GlRenderer.sceneState.dxSpeed = 0.0f;
+				GlRenderer.sceneState.dySpeed = 0.0f;
+			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_LEFT:
-			GlRenderer.sceneState.ySpeed -= 0.1f;
+			synchronized (GlRenderer.sceneState) {
+				GlRenderer.sceneState.saveRotation();
+				GlRenderer.sceneState.dxSpeed -= 0.1f;
+			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			GlRenderer.sceneState.ySpeed += 0.1f;
+			synchronized (GlRenderer.sceneState) {
+				GlRenderer.sceneState.saveRotation();
+				GlRenderer.sceneState.dxSpeed += 0.1f;
+			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_UP:
-			GlRenderer.sceneState.xSpeed -= 0.1f;
+			synchronized (GlRenderer.sceneState) {
+				GlRenderer.sceneState.saveRotation();
+				GlRenderer.sceneState.dySpeed -= 0.1f;
+			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_DOWN:
-			GlRenderer.sceneState.xSpeed += 0.1f;
+			synchronized (GlRenderer.sceneState) {
+				GlRenderer.sceneState.saveRotation();
+				GlRenderer.sceneState.dySpeed += 0.1f;
+			}
 			break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
+	private float startX, startY;
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
 			return true;
 		}
+		
+		synchronized (GlRenderer.sceneState) {
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				GlRenderer.sceneState.dxSpeed = 0.0f;
+				GlRenderer.sceneState.dySpeed = 0.0f;
+				GlRenderer.sceneState.saveRotation();
+				startX = event.getX();
+				startY = event.getY();
+				break;
+			case MotionEvent.ACTION_MOVE:
+				GlRenderer.sceneState.dx = event.getX() - startX;
+				GlRenderer.sceneState.dy = event.getY() - startY;
+				break;
+			}
+		}
+		
 		return super.onTouchEvent(event);
 	}
 
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener
     {
-    	private GlApp glApp;
-    	
-    	public GlAppGestureListener(GlApp glApp) {
-    		this.glApp = glApp;
-    	}
-
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			// toggle fullscreen flag
-			GlApp.fullscreen = !GlApp.fullscreen;
-			
-			// start a new one
-			Intent intent = new Intent(glApp, GlApp.class);
-			startActivity(intent);
-
-			// close current activity
-			glApp.finish();
-			
+			GlRenderer.sceneState.switchToNextObject();
 			return true;
+		}
+		
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			synchronized (GlRenderer.sceneState) {
+				// measure speed in milliseconds
+				GlRenderer.sceneState.dxSpeed = velocityX / 1000;
+				GlRenderer.sceneState.dySpeed = velocityY / 1000;
+			}
+			return super.onFling(e1, e2, velocityX, velocityY);
 		}
     }
 	

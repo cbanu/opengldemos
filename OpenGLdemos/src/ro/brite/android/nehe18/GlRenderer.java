@@ -42,6 +42,7 @@ public class GlRenderer implements Renderer {
 	private static GlDisk partialDisk;
 
 	static final SceneState sceneState;
+	private long lastMillis;
 	
 	static {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
@@ -128,8 +129,8 @@ public class GlRenderer implements Renderer {
 		
 		// position object
 		gl.glTranslatef(0, 0, -6);
-		gl.glRotatef(sceneState.xRot, 1, 0, 0);
-		gl.glRotatef(sceneState.yRot, 0, 1, 0);
+		
+		sceneState.rotateModel(gl);
 
 		// draw object
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
@@ -167,9 +168,19 @@ public class GlRenderer implements Renderer {
 			break;
 		}
 		
+		// get current millis
+		long currentMillis = System.currentTimeMillis();
+		
 		// update rotations
-		sceneState.xRot += sceneState.xSpeed;
-		sceneState.yRot += sceneState.ySpeed;
+		if (lastMillis != 0) {
+			long delta = currentMillis - lastMillis;
+			sceneState.dx += sceneState.dxSpeed * delta;
+			sceneState.dy += sceneState.dySpeed * delta;
+			sceneState.dampenSpeed(delta);
+		}
+		
+		// update millis
+		lastMillis = currentMillis;
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
