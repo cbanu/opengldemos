@@ -14,18 +14,18 @@
             </intent-filter>
         </activity>
         <!-- NeHe Lessons -->
-        <activity android:name="ro.brite.android.nehe01.GlApp" android:label="Setup" />
-        <activity android:name="ro.brite.android.nehe02.GlApp" android:label="Triangles" />
-        <activity android:name="ro.brite.android.nehe03.GlApp" android:label="Colors" />
-        <activity android:name="ro.brite.android.nehe04.GlApp" android:label="Rotation" />
-        <activity android:name="ro.brite.android.nehe05.GlApp" android:label="3D Shapes" />
-        <activity android:name="ro.brite.android.nehe06.GlApp" android:label="Texture Mapping" />
-        <activity android:name="ro.brite.android.nehe07.GlApp" android:label="Texture Filters &amp; Lighting" />
-        <activity android:name="ro.brite.android.nehe08.GlApp" android:label="Blending" />
-        <activity android:name="ro.brite.android.nehe09.GlApp" android:label="Bitmap Animation" />
-        <activity android:name="ro.brite.android.nehe16.GlApp" android:label="Fog" />
-        <activity android:name="ro.brite.android.nehe18.GlApp" android:label="Quadrics" />
-        <activity android:name="ro.brite.android.nehe23.GlApp" android:label="Sphere Mapping" />
+        <activity android:name="ro.brite.android.nehe01.GlApp" android:label="Setup" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe02.GlApp" android:label="Triangles" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe03.GlApp" android:label="Colors" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe04.GlApp" android:label="Rotation" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe05.GlApp" android:label="3D Shapes" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe06.GlApp" android:label="Texture Mapping" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe07.GlApp" android:label="Texture Filters &amp; Lighting" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe08.GlApp" android:label="Blending" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe09.GlApp" android:label="Bitmap Animation" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe16.GlApp" android:label="Fog" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe18.GlApp" android:label="Quadrics" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="ro.brite.android.nehe23.GlApp" android:label="Sphere Mapping" android:configChanges="orientation|keyboardHidden" />
     </application>
     <uses-sdk android:minSdkVersion="3" />
 </manifest>
