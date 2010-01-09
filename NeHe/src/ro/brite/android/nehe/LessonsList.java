@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.sax.Element;
 import android.sax.EndElementListener;
@@ -20,6 +22,8 @@ import android.widget.SimpleAdapter;
 
 public class LessonsList extends ListActivity {
 	
+	private static boolean upgradeMessageShown;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,15 @@ public class LessonsList extends ListActivity {
         		new String[] { "title", "description", "image" },
         		new int[] { R.id.item_title, R.id.item_description, R.id.item_image });
         setListAdapter(adapter);
+        
+        if (!upgradeMessageShown) {
+        	AlertDialog.Builder bld = new AlertDialog.Builder(this);
+	        AlertDialog dlg = bld.create();
+	        dlg.setMessage("This application will be discontinued. There's a new application in the Market to take its place. Please look for 'OpenGL Demos'. Thanks!");
+	        dlg.setButton(AlertDialog.BUTTON_NEUTRAL, "Close", (OnClickListener)null);
+	        dlg.show();
+	        upgradeMessageShown = true;
+        }
     }
 
 	@Override
