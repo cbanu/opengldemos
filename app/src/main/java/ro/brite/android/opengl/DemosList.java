@@ -26,29 +26,53 @@ public class DemosList extends ListActivity {
         setContentView(R.layout.main);
 
         SimpleAdapter adapter = new SimpleAdapter(this, parseDemosXml(), R.layout.item,
-                new String[] { "title", "description", "image" },
-                new int[] { R.id.item_title, R.id.item_description, R.id.item_image });
+                new String[]{"title", "description", "image"},
+                new int[]{R.id.item_title, R.id.item_description, R.id.item_image});
         setListAdapter(adapter);
     }
 
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Map<?, ?> item = (Map<?, ?>)getListAdapter().getItem(position);
-        int itemId = (Integer)item.get("id");
+        Map<?, ?> item = (Map<?, ?>) getListAdapter().getItem(position);
+        int itemId = (Integer) item.get("id");
         switch (itemId) {
-            case  1: startActivity(new Intent(this, ro.brite.android.nehe01.GlApp.class)); break;
-            case  2: startActivity(new Intent(this, ro.brite.android.nehe02.GlApp.class)); break;
-            case  3: startActivity(new Intent(this, ro.brite.android.nehe03.GlApp.class)); break;
-            case  4: startActivity(new Intent(this, ro.brite.android.nehe04.GlApp.class)); break;
-            case  5: startActivity(new Intent(this, ro.brite.android.nehe05.GlApp.class)); break;
-            case  6: startActivity(new Intent(this, ro.brite.android.nehe06.GlApp.class)); break;
-            case  7: startActivity(new Intent(this, ro.brite.android.nehe07.GlApp.class)); break;
-            case  8: startActivity(new Intent(this, ro.brite.android.nehe08.GlApp.class)); break;
-            case  9: startActivity(new Intent(this, ro.brite.android.nehe09.GlApp.class)); break;
-            case 16: startActivity(new Intent(this, ro.brite.android.nehe16.GlApp.class)); break;
-            case 18: startActivity(new Intent(this, ro.brite.android.nehe18.GlApp.class)); break;
-            case 23: startActivity(new Intent(this, ro.brite.android.nehe23.GlApp.class)); break;
+            case 1:
+                startActivity(new Intent(this, ro.brite.android.nehe01.GlApp.class));
+                break;
+            case 2:
+                startActivity(new Intent(this, ro.brite.android.nehe02.GlApp.class));
+                break;
+            case 3:
+                startActivity(new Intent(this, ro.brite.android.nehe03.GlApp.class));
+                break;
+            case 4:
+                startActivity(new Intent(this, ro.brite.android.nehe04.GlApp.class));
+                break;
+            case 5:
+                startActivity(new Intent(this, ro.brite.android.nehe05.GlApp.class));
+                break;
+            case 6:
+                startActivity(new Intent(this, ro.brite.android.nehe06.GlApp.class));
+                break;
+            case 7:
+                startActivity(new Intent(this, ro.brite.android.nehe07.GlApp.class));
+                break;
+            case 8:
+                startActivity(new Intent(this, ro.brite.android.nehe08.GlApp.class));
+                break;
+            case 9:
+                startActivity(new Intent(this, ro.brite.android.nehe09.GlApp.class));
+                break;
+            case 16:
+                startActivity(new Intent(this, ro.brite.android.nehe16.GlApp.class));
+                break;
+            case 18:
+                startActivity(new Intent(this, ro.brite.android.nehe18.GlApp.class));
+                break;
+            case 23:
+                startActivity(new Intent(this, ro.brite.android.nehe23.GlApp.class));
+                break;
             default:
                 super.onListItemClick(l, v, position, id);
                 break;

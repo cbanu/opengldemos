@@ -3,11 +3,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <ListView android:id="@id/android:list"
+    <ListView
+        android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <TextView android:id="@id/android:empty"
+    <TextView
+        android:id="@id/android:empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:text="@string/no_demos" />

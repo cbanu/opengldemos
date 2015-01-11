@@ -32,7 +32,7 @@ public class GlRenderer implements Renderer {
         // setup projection matrix
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
-        GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 1.0f, 100.0f);
+        GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
     }
 
 }

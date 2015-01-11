@@ -27,8 +27,7 @@ public class GlApp extends Activity {
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         surface.onResume();
     }
