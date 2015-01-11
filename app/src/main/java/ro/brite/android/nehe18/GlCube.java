@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import ro.brite.android.opengl.common.Utils;
+
 
 class GlCube extends GlObject {
 	
@@ -132,8 +134,8 @@ class GlCube extends GlObject {
 		cubeTextureBfr = new FloatBuffer[6];
 		for (int i = 0; i < 6; i++)
 		{
-			cubeNormalBfr[i] = FloatBuffer.wrap(cubeNormalCoords[i]);
-			cubeTextureBfr[i] = FloatBuffer.wrap(cubeTextureCoords[i]);
+			cubeNormalBfr[i] = Utils.wrapDirect(cubeNormalCoords[i]);
+			cubeTextureBfr[i] = Utils.wrapDirect(cubeTextureCoords[i]);
 		}
 	}
 	
@@ -162,7 +164,7 @@ class GlCube extends GlObject {
 			{
 				vertices[j] = cubeVertexCoordsTemplate[i][j] * size;
 			}
-			cubeVertexBfr[i] = FloatBuffer.wrap(vertices);
+			cubeVertexBfr[i] = Utils.wrapDirect(vertices);
 		}
 	}
 

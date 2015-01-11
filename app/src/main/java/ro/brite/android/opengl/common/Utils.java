@@ -21,22 +21,24 @@ public final class Utils {
 		yFlipMatrix = new Matrix();
 		yFlipMatrix.postScale(1, -1); // flip Y axis
 		
-		System.loadLibrary("opengl-math");
+		System.loadLibrary("openglmath");
 	}
 	
 	public static native void computeSphereEnvTexCoords(
 		    FloatBuffer vEyeBuff, FloatBuffer mInvRotBuff,
 		    FloatBuffer coordsBuf, FloatBuffer normalsBuff, FloatBuffer texCoordsBuff,
 		    int length);
-	
+
+    public static FloatBuffer allocDirect(int count) {
+        ByteBuffer buff = ByteBuffer.allocateDirect(count * Float.SIZE / Byte.SIZE);
+        buff.order(ByteOrder.nativeOrder());
+        return buff.asFloatBuffer();
+    }
+
 	public static FloatBuffer wrapDirect(float[] v) {
-		ByteBuffer buff = ByteBuffer.allocateDirect(v.length * Float.SIZE / Byte.SIZE);
-		buff.order(ByteOrder.nativeOrder());
-		
-		FloatBuffer data = buff.asFloatBuffer();
+		FloatBuffer data = allocDirect(v.length);
 		data.put(v);
 		data.position(0);
-		
 		return data;
 	}
 	
@@ -45,10 +47,7 @@ public final class Utils {
 		for (int i = 0; i < m.length; i++)
 			totalLength += m[i].length;
 		
-		ByteBuffer buff = ByteBuffer.allocateDirect(totalLength * Float.SIZE / Byte.SIZE);
-		buff.order(ByteOrder.nativeOrder());
-		
-		FloatBuffer data = buff.asFloatBuffer();
+		FloatBuffer data = allocDirect(totalLength);
 		for (int i = 0; i < m.length; i++)
 			data.put(m[i]);
 		

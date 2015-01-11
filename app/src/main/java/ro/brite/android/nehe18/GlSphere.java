@@ -90,12 +90,12 @@ class GlSphere extends GlObject {
 				}
 			}
 			
-			slicesBuffers[i] = FloatBuffer.wrap(vertexCoords);
+			slicesBuffers[i] = Utils.wrapDirect(vertexCoords);
 			if (useNormals) {
-				normalsBuffers[i] = FloatBuffer.wrap(normalCoords);
+				normalsBuffers[i] = Utils.wrapDirect(normalCoords);
 			}
 			if (useTexCoords) {
-				texCoordsBuffers[i] = FloatBuffer.wrap(textureCoords);
+				texCoordsBuffers[i] = Utils.wrapDirect(textureCoords);
 			}
 		}
 	}

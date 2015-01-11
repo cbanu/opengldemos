@@ -8,6 +8,8 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
+import ro.brite.android.opengl.common.Utils;
+
 public class GlRenderer implements Renderer {
 
 	private static float[] triangleCoords = new float[] {
@@ -37,9 +39,9 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		triangleVertexBfr = FloatBuffer.wrap(triangleCoords);
-		triangleColorBfr = FloatBuffer.wrap(triangleColors);
-		quadVertexBfr = FloatBuffer.wrap(quadCoords);
+		triangleVertexBfr = Utils.wrapDirect(triangleCoords);
+		triangleColorBfr = Utils.wrapDirect(triangleColors);
+		quadVertexBfr = Utils.wrapDirect(quadCoords);
 		
 		sceneState = new SceneState();
 	}

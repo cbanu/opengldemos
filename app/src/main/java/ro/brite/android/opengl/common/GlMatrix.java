@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 public class GlMatrix {
 	
 	static {
-		System.loadLibrary("opengl-math");
+		System.loadLibrary("openglmath");
 	}
 	
 	private static native void identity(FloatBuffer fb);

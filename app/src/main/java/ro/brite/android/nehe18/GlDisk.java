@@ -83,12 +83,12 @@ class GlDisk extends GlObject {
 				}
 			}
 			
-			loopsBuffers[i] = FloatBuffer.wrap(vertexCoords);
+			loopsBuffers[i] = Utils.wrapDirect(vertexCoords);
 			if (normals) {
-				normalsBuffers[i] = FloatBuffer.wrap(normalCoords);
+				normalsBuffers[i] = Utils.wrapDirect(normalCoords);
 			}
 			if (texCoords) {
-				texCoordsBuffers[i] = FloatBuffer.wrap(textureCoords);
+				texCoordsBuffers[i] = Utils.wrapDirect(textureCoords);
 			}
 		}
 	}

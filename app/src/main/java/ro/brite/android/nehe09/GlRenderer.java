@@ -48,8 +48,8 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		quadVertexBuffer = FloatBuffer.wrap(quadVertexCoords);
-		quadTextureBuffer = FloatBuffer.wrap(quadTextureCoords);
+		quadVertexBuffer = Utils.wrapDirect(quadVertexCoords);
+		quadTextureBuffer = Utils.wrapDirect(quadTextureCoords);
 		
 		sceneState = new SceneState();
 	}

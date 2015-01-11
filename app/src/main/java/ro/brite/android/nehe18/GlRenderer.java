@@ -45,9 +45,9 @@ public class GlRenderer implements Renderer {
 	private long lastMillis;
 	
 	static {
-		lightAmbBfr = FloatBuffer.wrap(lightAmb);
-		lightDifBfr = FloatBuffer.wrap(lightDif);
-		lightPosBfr = FloatBuffer.wrap(lightPos);
+		lightAmbBfr = Utils.wrapDirect(lightAmb);
+		lightDifBfr = Utils.wrapDirect(lightDif);
+		lightPosBfr = Utils.wrapDirect(lightPos);
 
 		cube = new GlCube(1.0f, true, true);
 		cylinder = new GlCylinder(1.0f, 1.0f, 3.0f, 32, 4, true, true);

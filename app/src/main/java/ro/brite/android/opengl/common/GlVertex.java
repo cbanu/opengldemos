@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 public class GlVertex {
 	
 	static {
-		System.loadLibrary("opengl-math");
+		System.loadLibrary("openglmath");
 	}
 	
 	private static native void set(FloatBuffer fb, float x, float y, float z, float w);

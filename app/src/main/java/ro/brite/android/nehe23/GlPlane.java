@@ -6,6 +6,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import ro.brite.android.opengl.common.GlMatrix;
 import ro.brite.android.opengl.common.GlVertex;
+import ro.brite.android.opengl.common.Utils;
 
 
 class GlPlane extends GlObject {
@@ -35,8 +36,8 @@ class GlPlane extends GlObject {
 	private final static FloatBuffer planeTextureBfr;
 	
 	static {
-		planeNormalBfr = FloatBuffer.wrap(planeNormalCoords);
-		planeTextureBfr = FloatBuffer.wrap(planeTextureCoords);
+		planeNormalBfr = Utils.wrapDirect(planeNormalCoords);
+		planeTextureBfr = Utils.wrapDirect(planeTextureCoords);
 	}
 	
 	private float width;
@@ -63,7 +64,7 @@ class GlPlane extends GlObject {
 			vertices[3 * i + 1] = planeVertexCoordsTemplate[3 * i + 1] * height / 2;
 			vertices[3 * i + 2] = planeVertexCoordsTemplate[3 * i + 2];
 		}
-		planeVertexBfr = FloatBuffer.wrap(vertices);
+		planeVertexBfr = Utils.wrapDirect(vertices);
 	}
 
 	@Override

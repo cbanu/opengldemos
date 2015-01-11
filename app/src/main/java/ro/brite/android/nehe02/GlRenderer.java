@@ -8,6 +8,8 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
+import ro.brite.android.opengl.common.Utils;
+
 public class GlRenderer implements Renderer {
 
 	private static float[] triangleCoords = new float[] {
@@ -28,8 +30,8 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		triangleBuffer = FloatBuffer.wrap(triangleCoords);
-		quadBuffer = FloatBuffer.wrap(quadCoords);
+        triangleBuffer = Utils.wrapDirect(triangleCoords);
+        quadBuffer = Utils.wrapDirect(quadCoords);
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {

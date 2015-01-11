@@ -6,6 +6,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import ro.brite.android.nehe05.SceneState;
+import ro.brite.android.opengl.common.Utils;
 
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
@@ -86,13 +87,13 @@ public class GlRenderer implements Renderer {
 	
 	static
 	{
-		pyramidVertexBfr = FloatBuffer.wrap(pyramidCoords);
-		pyramidColorBfr = FloatBuffer.wrap(pyramidColors);
+		pyramidVertexBfr = Utils.wrapDirect(pyramidCoords);
+		pyramidColorBfr = Utils.wrapDirect(pyramidColors);
 		
 		cubeVertexBfr = new FloatBuffer[6];
 		for (int i = 0; i < 6; i++)
 		{
-			cubeVertexBfr[i] = FloatBuffer.wrap(cubeCoords[i]);
+			cubeVertexBfr[i] = Utils.wrapDirect(cubeCoords[i]);
 		}
 		
 		sceneState = new SceneState();

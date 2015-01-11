@@ -171,16 +171,16 @@ public class GlRenderer implements Renderer {
 		cubeTextureBfr = new FloatBuffer[6];
 		for (int i = 0; i < 6; i++)
 		{
-			cubeVertexBfr[i] = FloatBuffer.wrap(cubeVertexCoords[i]);
-			cubeNormalBfr[i] = FloatBuffer.wrap(cubeNormalCoords[i]);
-			cubeTextureBfr[i] = FloatBuffer.wrap(cubeTextureCoords[i]);
+			cubeVertexBfr[i] = Utils.wrapDirect(cubeVertexCoords[i]);
+			cubeNormalBfr[i] = Utils.wrapDirect(cubeNormalCoords[i]);
+			cubeTextureBfr[i] = Utils.wrapDirect(cubeTextureCoords[i]);
 		}
 		
-		lightAmbBfr = FloatBuffer.wrap(lightAmb);
-		lightDifBfr = FloatBuffer.wrap(lightDif);
-		lightPosBfr = FloatBuffer.wrap(lightPos);
+		lightAmbBfr = Utils.wrapDirect(lightAmb);
+		lightDifBfr = Utils.wrapDirect(lightDif);
+		lightPosBfr = Utils.wrapDirect(lightPos);
 		
-		fogColorBfr = FloatBuffer.wrap(fogColor);
+		fogColorBfr = Utils.wrapDirect(fogColor);
 		
 		sceneState = new SceneState();
 	}

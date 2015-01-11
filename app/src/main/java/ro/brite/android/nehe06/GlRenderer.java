@@ -116,8 +116,8 @@ public class GlRenderer implements Renderer {
 		cubeTextureBfr = new FloatBuffer[6];
 		for (int i = 0; i < 6; i++)
 		{
-			cubeVertexBfr[i] = FloatBuffer.wrap(cubeVertexCoords[i]);
-			cubeTextureBfr[i] = FloatBuffer.wrap(cubeTextureCoords[i]);
+			cubeVertexBfr[i] = Utils.wrapDirect(cubeVertexCoords[i]);
+			cubeTextureBfr[i] = Utils.wrapDirect(cubeTextureCoords[i]);
 		}
 		
 		sceneState = new SceneState();
