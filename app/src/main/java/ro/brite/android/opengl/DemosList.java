@@ -12,6 +12,7 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
+import android.text.Html;
 import android.util.Xml;
 import android.view.View;
 import android.widget.ListView;
@@ -98,7 +99,7 @@ public class DemosList extends ListActivity {
         });
         item.getChild("description").setEndTextElementListener(new EndTextElementListener() {
             public void end(String value) {
-                currentItem.put("description", value);
+                currentItem.put("description", Html.fromHtml(value));
             }
         });
         item.getChild("id").setEndTextElementListener(new EndTextElementListener() {
