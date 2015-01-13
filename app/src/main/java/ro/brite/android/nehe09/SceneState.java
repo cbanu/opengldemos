@@ -10,7 +10,7 @@ final class SceneState {
     float spin;
     boolean twinkle = false;
 
-    public SceneState() {
+    SceneState() {
         // setup stars
         stars = new Star[nrStars];
         for (int i = 0; i < nrStars; i++) {
@@ -23,11 +23,11 @@ final class SceneState {
         }
     }
 
-    public void toggleTwinkle() {
+    void toggleTwinkle() {
         twinkle = !twinkle;
     }
 
-    public void updateNextFrame() {
+    void updateNextFrame() {
         for (int i = 0; i < nrStars; i++) {
             spin += 0.01f;                                    // Used To Spin The Stars
             stars[i].angle += ((float) i) / nrStars;            // Changes The Angle Of A Star

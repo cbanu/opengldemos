@@ -232,6 +232,11 @@ public class GlRenderer implements Renderer {
     }
 
     public void onDrawFrame(GL10 gl) {
+        synchronized (sceneState) {
+            // freeze scene state variables
+            sceneState.takeDataSnapshot();
+        }
+
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -256,7 +261,9 @@ public class GlRenderer implements Renderer {
 
         gl.glTranslatef(0, 0, -6);
 
-        sceneState.rotateModel(gl);
+        synchronized (sceneState) {
+            sceneState.rotateModel(gl);
+        }
 
         gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(sceneState.filter));
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -279,9 +286,11 @@ public class GlRenderer implements Renderer {
         // update rotations
         if (lastMillis != 0) {
             long delta = currentMillis - lastMillis;
-            sceneState.dx += sceneState.dxSpeed * delta;
-            sceneState.dy += sceneState.dySpeed * delta;
-            sceneState.dampenSpeed(delta);
+            synchronized (sceneState) {
+                sceneState.dx += sceneState.dxSpeed * delta;
+                sceneState.dy += sceneState.dySpeed * delta;
+                sceneState.dampenSpeed(delta);
+            }
         }
 
         // update millis

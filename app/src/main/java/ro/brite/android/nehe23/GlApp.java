@@ -130,11 +130,9 @@ public class GlApp extends Activity {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            synchronized (GlRenderer.sceneState) {
-                // measure speed in milliseconds
-                GlRenderer.sceneState.dxSpeed = velocityX / 1000;
-                GlRenderer.sceneState.dySpeed = velocityY / 1000;
-            }
+            // measure speed in milliseconds
+            GlRenderer.sceneState.dxSpeed = velocityX / 1000;
+            GlRenderer.sceneState.dySpeed = velocityY / 1000;
             return super.onFling(e1, e2, velocityX, velocityY);
         }
     }

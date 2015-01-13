@@ -66,7 +66,6 @@ public class GlRenderer implements Renderer {
     }
 
     private void LoadTextures(GL10 gl) {
-
         gl.glEnable(GL10.GL_TEXTURE_2D);
         int[] textureIDs = new int[]{R.drawable.nehe_texture_background, R.drawable.nehe_texture_background_sphere_map};
 

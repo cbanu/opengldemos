@@ -57,25 +57,35 @@ public class GlApp extends Activity {
                 GlRenderer.sceneState.switchToNextFilter();
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                GlRenderer.sceneState.saveRotation();
-                GlRenderer.sceneState.dxSpeed = 0.0f;
-                GlRenderer.sceneState.dySpeed = 0.0f;
+                synchronized (GlRenderer.sceneState) {
+                    GlRenderer.sceneState.saveRotation();
+                    GlRenderer.sceneState.dxSpeed = 0.0f;
+                    GlRenderer.sceneState.dySpeed = 0.0f;
+                }
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                GlRenderer.sceneState.saveRotation();
-                GlRenderer.sceneState.dxSpeed -= 0.1f;
+                synchronized (GlRenderer.sceneState) {
+                    GlRenderer.sceneState.saveRotation();
+                    GlRenderer.sceneState.dxSpeed -= 0.1f;
+                }
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                GlRenderer.sceneState.saveRotation();
-                GlRenderer.sceneState.dxSpeed += 0.1f;
+                synchronized (GlRenderer.sceneState) {
+                    GlRenderer.sceneState.saveRotation();
+                    GlRenderer.sceneState.dxSpeed += 0.1f;
+                }
                 break;
             case KeyEvent.KEYCODE_DPAD_UP:
-                GlRenderer.sceneState.saveRotation();
-                GlRenderer.sceneState.dySpeed -= 0.1f;
+                synchronized (GlRenderer.sceneState) {
+                    GlRenderer.sceneState.saveRotation();
+                    GlRenderer.sceneState.dySpeed -= 0.1f;
+                }
                 break;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                GlRenderer.sceneState.saveRotation();
-                GlRenderer.sceneState.dySpeed += 0.1f;
+                synchronized (GlRenderer.sceneState) {
+                    GlRenderer.sceneState.saveRotation();
+                    GlRenderer.sceneState.dySpeed += 0.1f;
+                }
                 break;
         }
         return super.onKeyDown(keyCode, event);
@@ -89,18 +99,20 @@ public class GlApp extends Activity {
             return true;
         }
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                GlRenderer.sceneState.dxSpeed = 0.0f;
-                GlRenderer.sceneState.dySpeed = 0.0f;
-                GlRenderer.sceneState.saveRotation();
-                startX = event.getX();
-                startY = event.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                GlRenderer.sceneState.dx = event.getX() - startX;
-                GlRenderer.sceneState.dy = event.getY() - startY;
-                break;
+        synchronized (GlRenderer.sceneState) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    GlRenderer.sceneState.dxSpeed = 0.0f;
+                    GlRenderer.sceneState.dySpeed = 0.0f;
+                    GlRenderer.sceneState.saveRotation();
+                    startX = event.getX();
+                    startY = event.getY();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    GlRenderer.sceneState.dx = event.getX() - startX;
+                    GlRenderer.sceneState.dy = event.getY() - startY;
+                    break;
+            }
         }
 
         return super.onTouchEvent(event);

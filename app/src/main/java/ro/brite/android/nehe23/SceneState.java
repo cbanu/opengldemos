@@ -19,15 +19,15 @@ final class SceneState {
     // snapshot values
     private float _dx, _dy;
 
-    public void toggleLighting() {
+    void toggleLighting() {
         lighting = !lighting;
     }
 
-    public void switchToNextFilter() {
+    void switchToNextFilter() {
         filter = (filter + 1) % 3;
     }
 
-    public void switchToNextObject() {
+    void switchToNextObject() {
         objectIdx = (objectIdx + 1) % 6;
     }
 
@@ -37,18 +37,23 @@ final class SceneState {
     }
 
     void saveRotation() {
-        float r = (float) Math.sqrt(_dx * _dx + _dy * _dy);
+        float r = (float) Math.sqrt(dx * dx + dy * dy);
         if (r != 0) {
             GlMatrix rotation = new GlMatrix();
-            rotation.rotate(r * angleFactor, _dy / r, _dx / r, 0);
+            rotation.rotate(r * angleFactor, dy / r, dx / r, 0);
             baseMatrix.premultiply(rotation);
 
             GlMatrix rotationInv = new GlMatrix();
-            rotationInv.rotate(-r * angleFactor, _dy / r, _dx / r, 0);
+            rotationInv.rotate(-r * angleFactor, dy / r, dx / r, 0);
             baseMatrixInv.multiply(rotationInv);
         }
-        GlRenderer.sceneState.dx = 0.0f;
-        GlRenderer.sceneState.dy = 0.0f;
+
+        dx = 0.0f;
+        dy = 0.0f;
+
+        // reset snapshot values as well
+        _dx = 0.0f;
+        _dy = 0.0f;
     }
 
     void rotateModel(GL10 gl) {

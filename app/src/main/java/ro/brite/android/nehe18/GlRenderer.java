@@ -116,6 +116,11 @@ public class GlRenderer implements Renderer {
     }
 
     public void onDrawFrame(GL10 gl) {
+        synchronized (sceneState) {
+            // freeze scene state variables
+            sceneState.takeDataSnapshot();
+        }
+
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -130,7 +135,9 @@ public class GlRenderer implements Renderer {
         // position object
         gl.glTranslatef(0, 0, -6);
 
-        sceneState.rotateModel(gl);
+        synchronized (sceneState) {
+            sceneState.rotateModel(gl);
+        }
 
         // draw object
         gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
@@ -174,9 +181,11 @@ public class GlRenderer implements Renderer {
         // update rotations
         if (lastMillis != 0) {
             long delta = currentMillis - lastMillis;
-            sceneState.dx += sceneState.dxSpeed * delta;
-            sceneState.dy += sceneState.dySpeed * delta;
-            sceneState.dampenSpeed(delta);
+            synchronized (sceneState) {
+                sceneState.dx += sceneState.dxSpeed * delta;
+                sceneState.dy += sceneState.dySpeed * delta;
+                sceneState.dampenSpeed(delta);
+            }
         }
 
         // update millis
