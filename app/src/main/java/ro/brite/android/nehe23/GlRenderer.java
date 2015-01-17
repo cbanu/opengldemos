@@ -17,6 +17,8 @@ import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 
+import junit.framework.Assert;
+
 
 public class GlRenderer implements Renderer {
 
@@ -196,6 +198,9 @@ public class GlRenderer implements Renderer {
             case 5:
                 object = partialDisk;
                 doubleSided = true;
+                break;
+            default:
+                Assert.fail("invalid object ID");
                 break;
         }
 

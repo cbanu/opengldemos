@@ -48,7 +48,7 @@ class GlCylinder extends GlObject {
             float[] normalCoords = new float[3 * 2 * (stacks + 1)];
             float[] textureCoords = new float[2 * 2 * (stacks + 1)];
 
-            double alpha0 = (i + 0) * (2 * Math.PI) / slices;
+            double alpha0 = i * (2 * Math.PI) / slices;
             double alpha1 = (i + 1) * (2 * Math.PI) / slices;
 
             float cosAlpha0 = (float) Math.cos(alpha0);
@@ -79,11 +79,11 @@ class GlCylinder extends GlObject {
                 }
 
                 if (texCoords) {
-                    textureCoords[2 * 2 * j + 0] = ((float) (i + 1)) / slices;
-                    textureCoords[2 * 2 * j + 1] = ((float) (j + 0)) / stacks;
+                    textureCoords[2 * 2 * j] = ((float) (i + 1)) / slices;
+                    textureCoords[2 * 2 * j + 1] = ((float) j) / stacks;
 
-                    textureCoords[2 * 2 * j + 2] = ((float) (i + 0)) / slices;
-                    textureCoords[2 * 2 * j + 3] = ((float) (j + 0)) / stacks;
+                    textureCoords[2 * 2 * j + 2] = ((float) i) / slices;
+                    textureCoords[2 * 2 * j + 3] = ((float) j) / stacks;
                 }
             }
 

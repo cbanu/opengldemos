@@ -15,6 +15,8 @@ import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 
+import junit.framework.Assert;
+
 
 public class GlRenderer implements Renderer {
 
@@ -172,6 +174,9 @@ public class GlRenderer implements Renderer {
                 gl.glDisable(GL10.GL_CULL_FACE);
                 gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, GL10.GL_TRUE);
                 partialDisk.draw(gl);
+                break;
+            default:
+                Assert.fail("invalid object ID");
                 break;
         }
 

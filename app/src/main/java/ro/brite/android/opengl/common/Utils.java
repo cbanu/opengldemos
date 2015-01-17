@@ -35,21 +35,19 @@ public final class Utils {
         return buff.asFloatBuffer();
     }
 
-    public static FloatBuffer wrapDirect(float[] v) {
-        FloatBuffer data = allocDirect(v.length);
-        data.put(v);
+    public static FloatBuffer wrapDirect(float[] vec) {
+        FloatBuffer data = allocDirect(vec.length);
+        data.put(vec);
         data.position(0);
         return data;
     }
 
-    public static FloatBuffer wrapDirect(float[][] m) {
+    public static FloatBuffer wrapDirect(float[][] mat) {
         int totalLength = 0;
-        for (int i = 0; i < m.length; i++)
-            totalLength += m[i].length;
+        for (float[] row : mat) totalLength += row.length;
 
         FloatBuffer data = allocDirect(totalLength);
-        for (int i = 0; i < m.length; i++)
-            data.put(m[i]);
+        for (float[] row : mat) data.put(row);
 
         data.position(0);
 

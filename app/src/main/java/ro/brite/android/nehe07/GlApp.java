@@ -3,6 +3,7 @@ package ro.brite.android.nehe07;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 public class GlApp extends Activity {
 
     private GLSurfaceView surface;
-    private GlRenderer renderer;
 
     private GestureDetector gestureDetector;
 
@@ -25,8 +25,7 @@ public class GlApp extends Activity {
         gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
         surface = new GLSurfaceView(this);
-        renderer = new GlRenderer(this);
-        surface.setRenderer(renderer);
+        surface.setRenderer(new GlRenderer(this));
         setContentView(surface);
 
         if (!toasted) {
@@ -48,7 +47,7 @@ public class GlApp extends Activity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_L:
                 GlRenderer.sceneState.toggleLighting();

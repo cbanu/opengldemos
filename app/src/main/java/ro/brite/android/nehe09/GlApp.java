@@ -3,6 +3,7 @@ package ro.brite.android.nehe09;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -10,7 +11,6 @@ import android.widget.Toast;
 public class GlApp extends Activity {
 
     private GLSurfaceView surface;
-    private GlRenderer renderer;
 
     private static boolean toasted;
 
@@ -19,8 +19,7 @@ public class GlApp extends Activity {
         super.onCreate(savedInstanceState);
 
         surface = new GLSurfaceView(this);
-        renderer = new GlRenderer(this);
-        surface.setRenderer(renderer);
+        surface.setRenderer(new GlRenderer(this));
         setContentView(surface);
 
         if (!toasted) {
@@ -42,7 +41,7 @@ public class GlApp extends Activity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_T:
                 GlRenderer.sceneState.toggleTwinkle();

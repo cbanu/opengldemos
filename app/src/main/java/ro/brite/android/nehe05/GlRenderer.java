@@ -5,7 +5,6 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import ro.brite.android.nehe05.SceneState;
 import ro.brite.android.opengl.common.Utils;
 
 import android.opengl.GLU;
@@ -133,7 +132,7 @@ public class GlRenderer implements Renderer {
         gl.glTranslatef(1.5f, 0, -6);
         gl.glRotatef(sceneState.cubeRot, 1, 1, 1);
         for (int i = 0; i < 6; i++) {
-            gl.glColor4f(cubeColors[4 * i + 0], cubeColors[4 * i + 1], cubeColors[4 * i + 2], cubeColors[4 * i + 3]);
+            gl.glColor4f(cubeColors[4 * i], cubeColors[4 * i + 1], cubeColors[4 * i + 2], cubeColors[4 * i + 3]);
             gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glVertexPointer(3, GL10.GL_FLOAT, 0, cubeVertexBfr[i]);
             gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);

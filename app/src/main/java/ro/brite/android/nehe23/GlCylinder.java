@@ -38,7 +38,7 @@ class GlCylinder extends GlObject {
 
         for (int i = 0; i < nrSlices; i++) {
 
-            double alpha0 = (i + 0) * (2 * Math.PI) / nrSlices;
+            double alpha0 = i * (2 * Math.PI) / nrSlices;
             double alpha1 = (i + 1) * (2 * Math.PI) / nrSlices;
 
             float cosAlpha0 = (float) Math.cos(alpha0);
@@ -69,10 +69,10 @@ class GlCylinder extends GlObject {
                         base - top);
 
                 textureCoords[2 * elemIdx + 2 * 2 * j + 0] = ((float) (i + 1)) / nrSlices;
-                textureCoords[2 * elemIdx + 2 * 2 * j + 1] = ((float) (j + 0)) / nrStacks;
+                textureCoords[2 * elemIdx + 2 * 2 * j + 1] = ((float) j) / nrStacks;
 
-                textureCoords[2 * elemIdx + 2 * 2 * j + 2] = ((float) (i + 0)) / nrSlices;
-                textureCoords[2 * elemIdx + 2 * 2 * j + 3] = ((float) (j + 0)) / nrStacks;
+                textureCoords[2 * elemIdx + 2 * 2 * j + 2] = ((float) i) / nrSlices;
+                textureCoords[2 * elemIdx + 2 * 2 * j + 3] = ((float) j) / nrStacks;
             }
         }
 
